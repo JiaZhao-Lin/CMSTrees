@@ -5,6 +5,7 @@
 *.d
 *.pcm
 *.so
+starlightTrunk_v*
 
 *.DS_Store
 *.icloud
