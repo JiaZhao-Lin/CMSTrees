@@ -31,7 +31,7 @@ http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/UserCode/kumarv/Input/StarToHepmc.C?v
 
 using namespace std;
 
-void convert_SL2LHE_Jpsi(string infilename = "output_all/slight_CohPsi2S_4Feeddown_0001.tx", string outfilename = "starlight_LHEtest", double beamE1 = 2510, double beamE2 = 2510) //makeEventsFile
+void convert_SL2LHE_phi(string infilename = "output_all/slight_CohPsi2S_4Feeddown_0001.tx", string outfilename = "starlight_LHEtest", double beamE1 = 2510, double beamE2 = 2510) //makeEventsFile
 {
     char ofName[100];
     sprintf(ofName,"%s.lhe", outfilename.c_str());
@@ -67,6 +67,7 @@ void convert_SL2LHE_Jpsi(string infilename = "output_all/slight_CohPsi2S_4Feeddo
 
     std::vector<double> px, py, pz, mass, e;
     std::vector<int>    pdg_id;
+	const int target_pdg_id = 321;  //kaon:321, mu:13
     while (getline(infile, temp_string)) {
 
         curstring.clear(); // needed when using several times istringstream::str(string)
@@ -105,14 +106,14 @@ void convert_SL2LHE_Jpsi(string infilename = "output_all/slight_CohPsi2S_4Feeddo
         //TParticle particle(pdg_id_temp, 0, 0, 0, 0, 0, px_temp, py_temp, pz_temp, 0.0, 0.0, 0.0, 0.0, 0.0);
         //TRACK:      6   2.9797       3.1399       84.461          1      1      0    -13
         if(NTrk == (int)px.size()){
-            if(TMath::Abs(pdg_id[0])==13 && TMath::Abs(pdg_id[1])==13){
+            if(TMath::Abs(pdg_id[0])==target_pdg_id && TMath::Abs(pdg_id[1])==target_pdg_id){
                 TLorentzVector fourMom1(px[0], py[0], pz[0], e[0]);
                 TLorentzVector fourMom2(px[1], py[1], pz[1], e[1]);
 
                 TLorentzVector motherFourMom = fourMom1 + fourMom2;
                 double y = motherFourMom.Rapidity();
 
-                if(TMath::Abs(y)>1.45 && TMath::Abs(y)<2.45){
+                if(TMath::Abs(y)>1.00 && TMath::Abs(y)<2.50){
                     if(nAccEvts) output << "</event>" << endl;
                     output << "<event>" << endl;
 

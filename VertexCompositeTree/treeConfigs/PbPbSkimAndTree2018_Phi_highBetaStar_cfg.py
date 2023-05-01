@@ -19,7 +19,7 @@ process.options = cms.untracked.PSet(wantSummary = cms.untracked.bool(True))
 # Define the input source
 process.source = cms.Source("PoolSource",
 #   fileNames = cms.untracked.vstring('/store/himc/HINPbPbAutumn18DR/DYJetsToLL_MLL-50_TuneCP5_HydjetDrumMB_5p02TeV-amcatnloFXFX-pythia8/AODSIM/mva98_103X_upgrade2018_realistic_HI_v11-v1/70003/FABA33C0-C8C5-9E4D-AEDB-48A33CC53415.root'),
-   fileNames = cms.untracked.vstring('file:/eos/cms/store/group/phys_heavyions/jiazhao/STARlight/Reco/STARlight_CohPhi2KK_PbPb5TeV_Reco_highBetaStar_complete/STARlight_CohPhi2KK_PbPb5TeV_GenFilter/STARlight_CohPhi2KK_PbPb5TeV_Reco_highBetaStar_complete/230416_214413/0000/step3_STARlight_Reco_highBetaStar_1.root'),
+   fileNames = cms.untracked.vstring('file:/eos/cms/store/group/phys_heavyions/jiazhao/STARlight/Reco/STARlight_CohPhi2KK_PbPb5TeV_Reco_highBetaStar/STARlight_CohPhi2KK_PbPb5TeV_GenFilter/STARlight_CohPhi2KK_PbPb5TeV_Reco_highBetaStar/230501_022414/0000/step3_STARlight_Reco_highBetaStar_344.root'),
    inputCommands=cms.untracked.vstring('keep *', 'drop *_hiEvtPlane_*_*')
 )
 process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(-1))

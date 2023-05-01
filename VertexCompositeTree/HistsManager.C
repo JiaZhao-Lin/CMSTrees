@@ -56,20 +56,20 @@ struct HistsManager
 	TH2D *hDeltaPhivsM;
 
 	// To calculate 3D efficiency
-	TH3D *hPosMuPhivsEtavsPt_Gen;
-	TH3D *hMthPosMuPhivsEtavsPt_Gen;
-	TH3D *hMthPosMuPhivsEtavsPt;
-	TH3D *hTrigPosMuPhivsEtavsPt;
+	TH3D *hPosKaonPhivsEtavsPt_Gen;
+	TH3D *hMthPosKaonPhivsEtavsPt_Gen;
+	TH3D *hMthPosKaonPhivsEtavsPt;
+	TH3D *hTrigPosKaonPhivsEtavsPt;
 
-	TH3D *hNegMuPhivsEtavsPt_Gen;
-	TH3D *hMthNegMuPhivsEtavsPt_Gen;
-	TH3D *hMthNegMuPhivsEtavsPt;
-	TH3D *hTrigNegMuPhivsEtavsPt;
+	TH3D *hNegKaonPhivsEtavsPt_Gen;
+	TH3D *hMthNegKaonPhivsEtavsPt_Gen;
+	TH3D *hMthNegKaonPhivsEtavsPt;
+	TH3D *hTrigNegKaonPhivsEtavsPt;
 
-	TH3D *hMthPosMuPhivsEtavsPtInpair;
-	TH3D *hTrigPosMuPhivsEtavsPtInpair;
-	TH3D *hMthNegMuPhivsEtavsPtInpair;
-	TH3D *hTrigNegMuPhivsEtavsPtInpair;
+	TH3D *hMthPosKaonPhivsEtavsPtInpair;
+	TH3D *hTrigPosKaonPhivsEtavsPtInpair;
+	TH3D *hMthNegKaonPhivsEtavsPtInpair;
+	TH3D *hTrigNegKaonPhivsEtavsPtInpair;
 
 	void InitHists()
 	{
@@ -164,7 +164,7 @@ struct HistsManager
 
 		const Int_t nEtaBins = 100;
 		Double_t Eta[nEtaBins+1];
-		Double_t mEtaLow = -2.5, mEtaHi = 2.5;
+		Double_t mEtaLow = -6, mEtaHi = 6;
 		Double_t mEtaStep = (mEtaHi - mEtaLow)/nEtaBins;
 
 		for(Int_t ieta=0; ieta<=nEtaBins; ieta++)
@@ -207,28 +207,28 @@ struct HistsManager
 		cout<<Phi[nPhiBins]<<endl;
 		cout<<endl;
 
-		hPosMuPhivsEtavsPt_Gen    = new TH3D("hPosMuPhivsEtavsPt_Gen",    "hPosMuPhivsEtavsPt_Gen;    p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
-		hMthPosMuPhivsEtavsPt_Gen = new TH3D("hMthPosMuPhivsEtavsPt_Gen", "hMthPosMuPhivsEtavsPt_Gen; p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
-		hMthPosMuPhivsEtavsPt     = new TH3D("hMthPosMuPhivsEtavsPt",     "hMthPosMuPhivsEtavsPt;     p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
-		hTrigPosMuPhivsEtavsPt    = new TH3D("hTrigPosMuPhivsEtavsPt",    "hTrigPosMuPhivsEtavsPt;    p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
-		hNegMuPhivsEtavsPt_Gen    = new TH3D("hNegMuPhivsEtavsPt_Gen",    "hNegMuPhivsEtavsPt_Gen;    p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
-		hMthNegMuPhivsEtavsPt_Gen = new TH3D("hMthNegMuPhivsEtavsPt_Gen", "hMthNegMuPhivsEtavsPt_Gen; p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
-		hMthNegMuPhivsEtavsPt     = new TH3D("hMthNegMuPhivsEtavsPt",     "hMthNegMuPhivsEtavsPt;     p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
-		hTrigNegMuPhivsEtavsPt    = new TH3D("hTrigNegMuPhivsEtavsPt",    "hTrigNegMuPhivsEtavsPt;    p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
+		hPosKaonPhivsEtavsPt_Gen    = new TH3D("hPosKaonPhivsEtavsPt_Gen",    "hPosKaonPhivsEtavsPt_Gen;    p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
+		hMthPosKaonPhivsEtavsPt_Gen = new TH3D("hMthPosKaonPhivsEtavsPt_Gen", "hMthPosKaonPhivsEtavsPt_Gen; p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
+		hMthPosKaonPhivsEtavsPt     = new TH3D("hMthPosKaonPhivsEtavsPt",     "hMthPosKaonPhivsEtavsPt;     p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
+		hTrigPosKaonPhivsEtavsPt    = new TH3D("hTrigPosKaonPhivsEtavsPt",    "hTrigPosKaonPhivsEtavsPt;    p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
+		hNegKaonPhivsEtavsPt_Gen    = new TH3D("hNegKaonPhivsEtavsPt_Gen",    "hNegKaonPhivsEtavsPt_Gen;    p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
+		hMthNegKaonPhivsEtavsPt_Gen = new TH3D("hMthNegKaonPhivsEtavsPt_Gen", "hMthNegKaonPhivsEtavsPt_Gen; p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
+		hMthNegKaonPhivsEtavsPt     = new TH3D("hMthNegKaonPhivsEtavsPt",     "hMthNegKaonPhivsEtavsPt;     p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
+		hTrigNegKaonPhivsEtavsPt    = new TH3D("hTrigNegKaonPhivsEtavsPt",    "hTrigNegKaonPhivsEtavsPt;    p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
 
-		hMthPosMuPhivsEtavsPtInpair  = new TH3D("hMthPosMuPhivsEtavsPtInpair",  "hMthPosMuPhivsEtavsPtInpair;  p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
-		hTrigPosMuPhivsEtavsPtInpair = new TH3D("hTrigPosMuPhivsEtavsPtInpair", "hTrigPosMuPhivsEtavsPtInpair; p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
-		hMthNegMuPhivsEtavsPtInpair  = new TH3D("hMthNegMuPhivsEtavsPtInpair",  "hMthNegMuPhivsEtavsPtInpair;  p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
-		hTrigNegMuPhivsEtavsPtInpair = new TH3D("hTrigNegMuPhivsEtavsPtInpair", "hTrigNegMuPhivsEtavsPtInpair; p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
+		hMthPosKaonPhivsEtavsPtInpair  = new TH3D("hMthPosKaonPhivsEtavsPtInpair",  "hMthPosKaonPhivsEtavsPtInpair;  p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
+		hTrigPosKaonPhivsEtavsPtInpair = new TH3D("hTrigPosKaonPhivsEtavsPtInpair", "hTrigPosKaonPhivsEtavsPtInpair; p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
+		hMthNegKaonPhivsEtavsPtInpair  = new TH3D("hMthNegKaonPhivsEtavsPtInpair",  "hMthNegKaonPhivsEtavsPtInpair;  p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
+		hTrigNegKaonPhivsEtavsPtInpair = new TH3D("hTrigNegKaonPhivsEtavsPtInpair", "hTrigNegKaonPhivsEtavsPtInpair; p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
 	}
 
-	void WriteHists(TString fileName = "outFiles/Test.root")
+	void WriteHists(TString outFileDir = "outFiles/Test.root")
 	{
-		TFile* fOut = new TFile(fileName, "recreate");
+		TFile* fOut = new TFile(outFileDir, "recreate");
 
 		fOut->cd();
 
-		// hnEvts->Write();
+		hnEvts->Write();
 		// hVzvsVyvsVx->Write();
 		// hHFMinusvsHFPlus->Write();
 		// hNCanvsNtrkvsCen->Write();
@@ -276,20 +276,20 @@ struct HistsManager
 		// hMvsAsyPhivsRap->Write();
 		// hDeltaPhivsM->Write();
 
-		// hPosMuPhivsEtavsPt_Gen->Write();
-		// hMthPosMuPhivsEtavsPt_Gen->Write();
-		// hMthPosMuPhivsEtavsPt->Write();
-		// hTrigPosMuPhivsEtavsPt->Write();
+		hPosKaonPhivsEtavsPt_Gen->Write();
+		hMthPosKaonPhivsEtavsPt_Gen->Write();
+		hMthPosKaonPhivsEtavsPt->Write();
+		hTrigPosKaonPhivsEtavsPt->Write();
 
-		// hNegMuPhivsEtavsPt_Gen->Write();
-		// hMthNegMuPhivsEtavsPt_Gen->Write();
-		// hMthNegMuPhivsEtavsPt->Write();
-		// hTrigNegMuPhivsEtavsPt->Write();
+		hNegKaonPhivsEtavsPt_Gen->Write();
+		hMthNegKaonPhivsEtavsPt_Gen->Write();
+		hMthNegKaonPhivsEtavsPt->Write();
+		hTrigNegKaonPhivsEtavsPt->Write();
 
-		// hMthPosMuPhivsEtavsPtInpair->Write();
-		// hTrigPosMuPhivsEtavsPtInpair->Write();
-		// hMthNegMuPhivsEtavsPtInpair->Write();
-		// hTrigNegMuPhivsEtavsPtInpair->Write();
+		hMthPosKaonPhivsEtavsPtInpair->Write();
+		hTrigPosKaonPhivsEtavsPtInpair->Write();
+		hMthNegKaonPhivsEtavsPtInpair->Write();
+		hTrigNegKaonPhivsEtavsPtInpair->Write();
 
 		fOut->Close();
 	}

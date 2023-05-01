@@ -18,5 +18,6 @@ __pycache__
 *.png
 *.pdf
 *.root
+*.out
 Test.*
 test.*

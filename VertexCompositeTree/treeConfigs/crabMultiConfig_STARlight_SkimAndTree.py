@@ -14,7 +14,7 @@ config.General.transferLogs = False
 
 config.section_('JobType')
 config.JobType.pluginName = 'Analysis'
-config.JobType.psetName = 'PbPbSkimAndTree2018_Phi_highBetaStar_cfg.py'
+config.JobType.psetName = 'PbPbSkimAndTree2018_Phi_cfg.py'
 config.JobType.inputFiles = ['HeavyIonRPRcd_PbPb2018_offline.db']
 #config.JobType.numCores = 1
 config.JobType.allowUndistributedCMSSW = True

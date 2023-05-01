@@ -14,7 +14,7 @@ config.General.transferLogs = False
 
 config.section_('JobType')
 config.JobType.pluginName = 'Analysis'
-config.JobType.psetName = 'PbPbSkimAndTree2018_Phi_cfg.py'
+config.JobType.psetName = 'PbPbSkimAndTree2018_Phi_highBetaStar_cfg.py'
 config.JobType.inputFiles = ['HeavyIonRPRcd_PbPb2018_offline.db']
 #config.JobType.numCores = 1
 config.JobType.allowUndistributedCMSSW = True
@@ -43,7 +43,7 @@ def submit(config):
 #############################################################################################
 
 dataMap = {
-        "STARlight_CohPhi2KK_PbPb5TeV_SkimAndTree_highBetaStar": { "Dataset": "/STARlight_CohPhi2KK_PbPb5TeV_GenFilter/phys_heavyions-STARlight_CohPhi2KK_PbPb5TeV_Reco_highBetaStar_complete-290d003bf260ab62f962d72bfb1fc87f/USER", "Memory": 2000, "RunTime": 1000 },
+        "STARlight_CohPhi2KK_PbPb5TeV_SkimAndTree_highBetaStar": { "Dataset": "/STARlight_CohPhi2KK_PbPb5TeV_GenFilter/phys_heavyions-STARlight_CohPhi2KK_PbPb5TeV_Reco_highBetaStar-290d003bf260ab62f962d72bfb1fc87f/USER", "Memory": 2000, "RunTime": 1000 },
         }
 
 ## Submit job for different datasets 
