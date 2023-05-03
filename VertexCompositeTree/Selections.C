@@ -24,6 +24,21 @@ bool IsPhi(int pdgId)
 	return pdgId == PDG_PHI;
 }
 
+bool Has2HPTrk(const int nTrk, TTreeReaderValue<std::vector<Int_t> >& PdgId, TTreeReaderValue<std::vector<unsigned short> >& trkIdx, TTreeReaderValue<std::vector<Bool_t>>& isHP)
+{
+	// ! require 2 high-pT tracks
+	int nHPTrk = 0;
+	// ! require 2 Kaon tracks
+	int nKaonTrk = 0;
+
+	for (int iTrk = 0; iTrk < nTrk; ++iTrk)
+	{
+		if (IsKaon(PdgId->at(iTrk))) nKaonTrk++;
+		if (IsKaon(PdgId->at(iTrk)) && isHP->at(trkIdx->at(iTrk))) nHPTrk++;
+	}
+	return nHPTrk == 2 && nKaonTrk == 2;
+}
+
 bool RecGenMatched(TVector3 Mom_rec, TVector3 Mom_gen, double BestDeltaR)
 {
 	// check if the reconstructed particle is matched to the generated one

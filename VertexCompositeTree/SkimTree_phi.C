@@ -1,7 +1,9 @@
 #include "Selections.C"
 #include "HistsManager.C"
 
-void SkimTree_phi(TString fileName = "inFiles/phi_tree_highBetaStar.root")
+// void FillDauInfo(){}
+
+void SkimTree_phi(TString fileName = "inFiles/phi_tree_highBetaStar_noCut.root")
 {
 
 	cout<<"running with: "<<fileName<<endl;
@@ -30,8 +32,9 @@ void SkimTree_phi(TString fileName = "inFiles/phi_tree_highBetaStar.root")
 	TTreeReaderValue<std::vector<char>>			gen_charge(treeReader,	"gen_charge");
 	TTreeReaderValue<std::vector<Float_t>>		gen_mass(treeReader,	"gen_mass");
 	TTreeReaderValue<std::vector<Int_t>>		gen_pdgId(treeReader,	"gen_pdgId");
+	TTreeReaderValue<std::vector<
+			std::vector<unsigned int>>>		gen_candIdx(treeReader,	"gen_candIdx");
 
-	TTreeReaderValue<std::vector<Bool_t>>		evtSel(treeReader,		"evtSel");
 	TTreeReaderValue<std::vector<Float_t>>		cand_mass(treeReader,	"cand_mass");
 	TTreeReaderValue<std::vector<Int_t>>		cand_pdgId(treeReader,	"cand_pdgId");
 	TTreeReaderValue<std::vector<Float_t>>		cand_pT(treeReader,		"cand_pT");
@@ -39,9 +42,13 @@ void SkimTree_phi(TString fileName = "inFiles/phi_tree_highBetaStar.root")
 	TTreeReaderValue<std::vector<Float_t>>		cand_phi(treeReader,	"cand_phi");
 	TTreeReaderValue<std::vector<Float_t>>		cand_y(treeReader,		"cand_y");
 	TTreeReaderValue<std::vector<char>>			cand_charge(treeReader,	"cand_charge");
+	TTreeReaderValue<std::vector<unsigned short>>		cand_trkIdx(treeReader,	"cand_trkIdx");
+	TTreeReaderValue<std::vector<unsigned short>>		cand_genIdx(treeReader,	"cand_genIdx");
+	TTreeReaderValue<std::vector<Bool_t>>		cand_matchGEN(treeReader,	"cand_matchGEN");
 
 
 
+	TTreeReaderValue<std::vector<Bool_t>>		evtSel(treeReader,		"evtSel");
 	// TTreeReaderValue<unsigned char>		centrality(treeReader,		"centrality");
 	TTreeReaderValue<Float_t>			bestvtxX(treeReader,		"bestvtxX");
 	TTreeReaderValue<Float_t>			bestvtxY(treeReader,		"bestvtxY");
@@ -50,6 +57,8 @@ void SkimTree_phi(TString fileName = "inFiles/phi_tree_highBetaStar.root")
 	// TTreeReaderValue<Float_t>			HFsumETMinus(treeReader,	"HFsumETMinus");
 	// TTreeReaderValue<unsigned short>	Ntrkoffline(treeReader,		"Ntrkoffline");
 	TTreeReaderValue<Int_t>				Ntrkgen(treeReader,			"Ntrkgen");
+
+	TTreeReaderValue<std::vector<Bool_t>>		trk_isHP(treeReader,			"trk_isHP");
 	// # -----------------------------------------------------------------------------------
 
 
@@ -80,13 +89,15 @@ void SkimTree_phi(TString fileName = "inFiles/phi_tree_highBetaStar.root")
 
 		// ! Skip HF veto for now due to lack of HF info in MC
 		// Bool_t goodHFVeto = (!evtSel->at(16) && !evtSel->at(17));
-		Bool_t goodHFVeto = true;
-		if(goodVtx & goodHFVeto) cHM.hnEvts->Fill(2.5);
+		// Bool_t goodHFVeto = true;
+		// if(goodVtx & goodHFVeto) cHM.hnEvts->Fill(2.5);
 
 		// ! Skip HF veto for now due to lack of HF info in MC
 		// Bool_t passEvtSel = goodVtx && goodHFVeto && (nTrkHP==2);
-		Bool_t passEvtSel = goodVtx;
-		if(passEvtSel) cHM.hnEvts->Fill(3.5);
+		int nrec = cand_mass->size();
+		Bool_t pass2HPTrk = Has2HPTrk(nrec, cand_pdgId, cand_trkIdx, trk_isHP);
+		// Bool_t passEvtSel = goodVtx && pass2HPTrk;
+		// if(passEvtSel) cHM.hnEvts->Fill(3.5);
 
 		// # ------------------------------------------------------------------------------------
 		
@@ -136,95 +147,90 @@ void SkimTree_phi(TString fileName = "inFiles/phi_tree_highBetaStar.root")
 
 		
 		// # Rec Gen Matching START-----------------------------------------------------------------------------
-		int nrec = cand_mass->size();
+		// ! require 2 high purity tracks
+		if (!pass2HPTrk) continue;
+
 		Double_t posMthDeltaR = 99999999.;
 		Double_t negMthDeltaR = 99999999.;
 		Int_t    posRecoIdx   = -1;
 		Int_t    negRecoIdx   = -1;
-		// if (nrec == 3)
-		// {
-			for (int irec = 0; irec < nrec; irec++)
+
+		for (int irec = 0; irec < nrec; irec++)
+		{
+			if (!IsKaon(cand_pdgId->at(irec))) continue;
+			Double_t Pt_temp  = cand_pT->at(irec);
+			Double_t Eta_temp = cand_eta->at(irec);
+			Double_t Phi_temp = cand_phi->at(irec);
+
+			TVector3 Mom_rec; Mom_rec.SetPtEtaPhi(Pt_temp, Eta_temp, Phi_temp);
+			TVector3 posMom_gen = posFourMom_gen.Vect();
+			TVector3 negMom_gen = negFourMom_gen.Vect();
+
+			if ( RecGenMatched(Mom_rec, posMom_gen, posMthDeltaR) )
 			{
-				if (!IsKaon(cand_pdgId->at(irec))) continue;
-				Double_t Pt_temp  = cand_pT->at(irec);
-				Double_t Eta_temp = cand_eta->at(irec);
-				Double_t Phi_temp = cand_phi->at(irec);
-
-				TVector3 Mom_rec; Mom_rec.SetPtEtaPhi(Pt_temp, Eta_temp, Phi_temp);
-				TVector3 Mom_gen = posFourMom_gen.Vect();
-
-				if ( RecGenMatched(Mom_rec, Mom_gen, posMthDeltaR) )
-				{
-					posMthDeltaR = Mom_rec.DeltaR(Mom_gen);
-					posRecoIdx   = irec;
-				}
-				if (RecGenMatched(Mom_rec, Mom_gen, negMthDeltaR))
-				{
-					negMthDeltaR = Mom_rec.DeltaR(Mom_gen);
-					negRecoIdx   = irec;
-				}
+				posMthDeltaR = posMom_gen.DeltaR(Mom_rec);
+				posRecoIdx   = irec;
 			}
-			if(posRecoIdx>=0 && negRecoIdx>=0 && posRecoIdx == negRecoIdx)
+			if (RecGenMatched(Mom_rec, negMom_gen, negMthDeltaR))
 			{
-				cout<<"One reco-track is matched to multiple gen-tracks !"<<endl;
+				negMthDeltaR = negMom_gen.DeltaR(Mom_rec);
+				negRecoIdx   = irec;
 			}
+		}
+		if(posRecoIdx>=0 && negRecoIdx>=0 && posRecoIdx == negRecoIdx)
+		{
+			cout<<"One reco-track is matched to multiple gen-tracks !"<<endl;
+		}
 
-			if( posRecoIdx>=0 )
-			{
-				Double_t Pt_temp     = cand_pT->at(posRecoIdx);
-				Double_t Eta_temp    = cand_eta->at(posRecoIdx);
-				Double_t Phi_temp    = cand_phi->at(posRecoIdx);
-				// Bool_t   isTrigKaon = trigMuon_mu()[trigIdx][posRecoIdx];
+		if( posRecoIdx>=0 )
+		{
+			Double_t Pt_temp     = cand_pT->at(posRecoIdx);
+			Double_t Eta_temp    = cand_eta->at(posRecoIdx);
+			Double_t Phi_temp    = cand_phi->at(posRecoIdx);
+			// Bool_t   isTrigKaon = trigMuon_mu()[trigIdx][posRecoIdx];
 
-				cHM.hDeltaR  ->Fill( posMthDeltaR );
-				cHM.hDeltaPt ->Fill( (Pt_temp-posPt_gen)/posPt_gen );
+			cHM.hDeltaR  ->Fill( posMthDeltaR );
+			cHM.hDeltaPt ->Fill( (Pt_temp-posPt_gen)/posPt_gen );
 
-				cHM.hPtResvsGenPt   ->Fill( posPt_gen, (Pt_temp-posPt_gen)/posPt_gen );
-				cHM.hEtaResvsGenEta ->Fill( posEta_gen, Eta_temp-posEta_gen          );
-				cHM.hPhiResvsGenPhi ->Fill( posPhi_gen, Phi_temp-posPhi_gen          );
+			cHM.hPtResvsGenPt   ->Fill( posPt_gen, (Pt_temp-posPt_gen)/posPt_gen );
+			cHM.hEtaResvsGenEta ->Fill( posEta_gen, Eta_temp-posEta_gen          );
+			cHM.hPhiResvsGenPhi ->Fill( posPhi_gen, Phi_temp-posPhi_gen          );
 
-				cHM.hMthPosKaonPhivsEtavsPt_Gen ->Fill(posPt_gen, posEta_gen, posPhi_gen);
-				cHM.hMthPosKaonPhivsEtavsPt     ->Fill(Pt_temp,      Eta_temp,      Phi_temp     );
+			cHM.hMthPosKaonPhivsEtavsPt_Gen ->Fill(posPt_gen, posEta_gen, posPhi_gen);
+			cHM.hMthPosKaonPhivsEtavsPt     ->Fill(Pt_temp,      Eta_temp,      Phi_temp     );
 
-				// if(isTrigKaon)
-				// {
-				// 	hTrigPosMuPhivsEtavsPt->Fill(muPt, muEta, Phi_temp);
-				// }
-			}
+			// if(isTrigKaon)
+			// {
+			// 	hTrigPosMuPhivsEtavsPt->Fill(muPt, muEta, Phi_temp);
+			// }
+		}
 
-			if(negRecoIdx>=0)
-			{
-				Double_t Pt_temp     = cand_pT->at(negRecoIdx);
-				Double_t Eta_temp    = cand_eta->at(negRecoIdx);
-				Double_t Phi_temp    = cand_phi->at(negRecoIdx);
-				// Bool_t   isTrigKaon = trigMuon_mu()[trigIdx][negRecoIdx];
+		if(negRecoIdx>=0)
+		{
+			Double_t Pt_temp     = cand_pT->at(negRecoIdx);
+			Double_t Eta_temp    = cand_eta->at(negRecoIdx);
+			Double_t Phi_temp    = cand_phi->at(negRecoIdx);
+			// Bool_t   isTrigKaon = trigMuon_mu()[trigIdx][negRecoIdx];
 
-				cHM.hDeltaR  ->Fill( negMthDeltaR );
-				cHM.hDeltaPt ->Fill( (Pt_temp-negPt_gen)/negPt_gen );
+			cHM.hDeltaR  ->Fill( negMthDeltaR );
+			cHM.hDeltaPt ->Fill( (Pt_temp-negPt_gen)/negPt_gen );
 
-				cHM.hPtResvsGenPt   ->Fill( negPt_gen, (Pt_temp-negPt_gen)/negPt_gen );
-				cHM.hEtaResvsGenEta ->Fill( negEta_gen, Eta_temp-negEta_gen          );
-				cHM.hPhiResvsGenPhi ->Fill( negPhi_gen, Phi_temp-negPhi_gen          );
+			cHM.hPtResvsGenPt   ->Fill( negPt_gen, (Pt_temp-negPt_gen)/negPt_gen );
+			cHM.hEtaResvsGenEta ->Fill( negEta_gen, Eta_temp-negEta_gen          );
+			cHM.hPhiResvsGenPhi ->Fill( negPhi_gen, Phi_temp-negPhi_gen          );
 
-				cHM.hMthNegKaonPhivsEtavsPt_Gen ->Fill(negPt_gen, negEta_gen, negPhi_gen);
-				cHM.hMthNegKaonPhivsEtavsPt     ->Fill(Pt_temp,      Eta_temp,      Phi_temp     );
+			cHM.hMthNegKaonPhivsEtavsPt_Gen ->Fill(negPt_gen, negEta_gen, negPhi_gen);
+			cHM.hMthNegKaonPhivsEtavsPt     ->Fill(Pt_temp,      Eta_temp,      Phi_temp     );
 
-				// if(isTrigMu){
-				// 	hTrigNegMuPhivsEtavsPt->Fill(muPt, muEta, muPhi);
-				// }
-			}
-
-
-		// }
-
+			// if(isTrigMu){
+			// 	hTrigNegMuPhivsEtavsPt->Fill(muPt, muEta, muPhi);
+			// }
+		}
 		// # Rec Gen Matching END-------------------------------------------------------------------------------
 
 
 		// # ---------------------------------------------------------------------------------------------------
 		// # Rec START------------------------------------------------------------------------------------------
-		
-		// ! throw away rec events with more than 3 tracks
-		if (nrec > 3)	continue;
 
 		Double_t posPt_rec;
 		Double_t posEta_rec;
@@ -235,7 +241,6 @@ void SkimTree_phi(TString fileName = "inFiles/phi_tree_highBetaStar.root")
 		Double_t negPhi_rec;
 		Double_t negMass_rec;
 
-		bool Kaon_pair_filled = false;
 		for (int irec = 0; irec < nrec; irec++)
 		{
 			// * catch kaon pair rec
@@ -255,44 +260,48 @@ void SkimTree_phi(TString fileName = "inFiles/phi_tree_highBetaStar.root")
 					negPhi_rec = cand_phi->at(irec);
 					negMass_rec = cand_mass->at(irec);
 				}
+
+				if (posMass_rec && negMass_rec)
+				{
+					TLorentzVector posFourMom_rec, negFourMom_rec, pairFourMom_rec;
+					posFourMom_rec.SetPtEtaPhiM(posPt_rec, posEta_rec, posPhi_rec, posMass_rec);
+					negFourMom_rec.SetPtEtaPhiM(negPt_rec, negEta_rec, negPhi_rec, negMass_rec);
+					pairFourMom_rec = posFourMom_rec + negFourMom_rec;
+
+					Double_t pt_rec   = pairFourMom_rec.Pt();
+					Double_t eta_rec  = pairFourMom_rec.Eta();
+					Double_t phi_rec  = pairFourMom_rec.Phi();
+					Double_t mass_rec = pairFourMom_rec.M();
+					Double_t y_rec    = pairFourMom_rec.Rapidity();
+
+					cHM.hPosKaonPhivsEtavsPt->Fill(posPt_rec, posEta_rec, posPhi_rec);
+					cHM.hNegKaonPhivsEtavsPt->Fill(negPt_rec, negEta_rec, negPhi_rec);
+
+					cHM.hM_InPair->Fill(mass_rec);
+					cHM.hPt_InPair->Fill(pt_rec);
+					cHM.hRap_InPair->Fill(y_rec);
+				}
 			}
-
-			if (posMass_rec && negMass_rec && !Kaon_pair_filled)
-			{
-				TLorentzVector posFourMom_rec, negFourMom_rec, pairFourMom_rec;
-				posFourMom_rec.SetPtEtaPhiM(posPt_rec, posEta_rec, posPhi_rec, posMass_rec);
-				negFourMom_rec.SetPtEtaPhiM(negPt_rec, negEta_rec, negPhi_rec, negMass_rec);
-				pairFourMom_rec = posFourMom_rec + negFourMom_rec;
-
-				Double_t pt_rec   = pairFourMom_rec.Pt();
-				Double_t eta_rec  = pairFourMom_rec.Eta();
-				Double_t phi_rec  = pairFourMom_rec.Phi();
-				Double_t mass_rec = pairFourMom_rec.M();
-				Double_t y_rec    = pairFourMom_rec.Rapidity();
-
-				cHM.hM_InPair->Fill(mass_rec);
-				cHM.hPt_InPair->Fill(pt_rec);
-				cHM.hRap_InPair->Fill(y_rec);
-
-				Kaon_pair_filled = true;
-			}
-
-
 			// * catch phi rec
-			if (!IsPhi(cand_pdgId->at(irec))) continue;
+			else if (IsPhi(cand_pdgId->at(irec)))
+			{
+				Double_t pt_rec   = cand_pT->at(irec);
+				Double_t eta_rec  =	cand_eta->at(irec);
+				Double_t phi_rec  =	cand_phi->at(irec);
+				Double_t mass_rec =	cand_mass->at(irec);
+				Double_t y_rec    =	cand_y->at(irec);
 
-			Double_t pt_rec   = cand_pT->at(irec);
-			Double_t eta_rec  =	cand_eta->at(irec);
-			Double_t phi_rec  =	cand_phi->at(irec);
-			Double_t mass_rec =	cand_mass->at(irec);
-			Double_t y_rec    =	cand_y->at(irec);
-
-			// * Collecting Selection 
-			// if (!passEvtSel) continue;
-			cHM.hMvsPtvsRap->Fill(y_rec, pt_rec, mass_rec);
-			cHM.hM->Fill(mass_rec);
-			cHM.hPt->Fill(pt_rec);
-			cHM.hRap->Fill(y_rec);
+				// * Collecting Selection 
+				// if (!passEvtSel) continue;
+				cHM.hMvsPtvsRap->Fill(y_rec, pt_rec, mass_rec);
+				cHM.hM->Fill(mass_rec);
+				cHM.hPt->Fill(pt_rec);
+				cHM.hRap->Fill(y_rec);
+			}
+			else
+			{
+				throw std::runtime_error("unknown particle type!");
+			}
 		}
 		// # Rec END--------------------------------------------------------------------------------------------
    	
@@ -301,23 +310,6 @@ void SkimTree_phi(TString fileName = "inFiles/phi_tree_highBetaStar.root")
 	}
 
 	cHM.WriteHists();
-	gStyle->SetOptStat();
-	auto c = new TCanvas("c", "c", 800, 600);
-	cHM.hRap->Draw("L");
-	c->SaveAs("outFigures/rap.png");
-	cHM.hRap_Gen->Draw();
-	c->SaveAs("outFigures/rap_gen.png");
-	cHM.hM ->Draw();
-	c->SaveAs("outFigures/mass.png");
-	cHM.hM_Gen ->Draw();
-	c->SaveAs("outFigures/mass_gen.png");
-	cHM.hPt ->Draw();
-	c->SaveAs("outFigures/pt.png");
-	cHM.hPt_Gen ->Draw();
-	c->SaveAs("outFigures/pt_gen.png");
-	cHM.hnEvts->Draw();
-	c->SaveAs("outFigures/nEvts.png");
-
 
 	// std::string inputFile;
 

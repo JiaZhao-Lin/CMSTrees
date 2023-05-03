@@ -57,11 +57,13 @@ struct HistsManager
 
 	// To calculate 3D efficiency
 	TH3D *hPosKaonPhivsEtavsPt_Gen;
+	TH3D *hPosKaonPhivsEtavsPt;
 	TH3D *hMthPosKaonPhivsEtavsPt_Gen;
 	TH3D *hMthPosKaonPhivsEtavsPt;
 	TH3D *hTrigPosKaonPhivsEtavsPt;
 
 	TH3D *hNegKaonPhivsEtavsPt_Gen;
+	TH3D *hNegKaonPhivsEtavsPt;
 	TH3D *hMthNegKaonPhivsEtavsPt_Gen;
 	TH3D *hMthNegKaonPhivsEtavsPt;
 	TH3D *hTrigNegKaonPhivsEtavsPt;
@@ -151,7 +153,7 @@ struct HistsManager
 		hMvsAsyPhivsRap = new TH3D("hMvsAsyPhivsRap", "hMvsAsyPhivsRap; Rapidity; #alpha; M_{#mu#mu} (GeV/c^{2})", mHistRapBins, mHistRapLow, mHistRapHi, mHistAsyPhiBins, mHistAsyPhiLow, mHistAsyPhiHi, mHistMassBins, mHistMassLow, mHistMassHi);
 		hDeltaPhivsM = new TH2D("hDeltaPhivsM", "hDeltaPhivsM; M_{#mu#mu} (GeV/c^{2}); #phi_{#mu^{+}+#mu^{-}} - #phi_{#mu^{+}-#mu^{-}}", mHistMassBins, mHistMassLow, mHistMassHi, 120, -PI, PI);
 
-		const Int_t nPtBins = 25;
+		const Int_t nPtBins = 50;
 		Double_t mPtLow = 0.0, mPtHi = 1;
 		Double_t mPtStep = (mPtHi - mPtLow)/nPtBins;
 		Double_t Pt[nPtBins+1];
@@ -208,10 +210,12 @@ struct HistsManager
 		cout<<endl;
 
 		hPosKaonPhivsEtavsPt_Gen    = new TH3D("hPosKaonPhivsEtavsPt_Gen",    "hPosKaonPhivsEtavsPt_Gen;    p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
+		hPosKaonPhivsEtavsPt		= new TH3D("hPosKaonPhivsEtavsPt",    "hPosKaonPhivsEtavsPt;    p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
 		hMthPosKaonPhivsEtavsPt_Gen = new TH3D("hMthPosKaonPhivsEtavsPt_Gen", "hMthPosKaonPhivsEtavsPt_Gen; p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
 		hMthPosKaonPhivsEtavsPt     = new TH3D("hMthPosKaonPhivsEtavsPt",     "hMthPosKaonPhivsEtavsPt;     p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
 		hTrigPosKaonPhivsEtavsPt    = new TH3D("hTrigPosKaonPhivsEtavsPt",    "hTrigPosKaonPhivsEtavsPt;    p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
 		hNegKaonPhivsEtavsPt_Gen    = new TH3D("hNegKaonPhivsEtavsPt_Gen",    "hNegKaonPhivsEtavsPt_Gen;    p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
+		hNegKaonPhivsEtavsPt		= new TH3D("hNegKaonPhivsEtavsPt",    "hNegKaonPhivsEtavsPt;    p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
 		hMthNegKaonPhivsEtavsPt_Gen = new TH3D("hMthNegKaonPhivsEtavsPt_Gen", "hMthNegKaonPhivsEtavsPt_Gen; p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
 		hMthNegKaonPhivsEtavsPt     = new TH3D("hMthNegKaonPhivsEtavsPt",     "hMthNegKaonPhivsEtavsPt;     p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
 		hTrigNegKaonPhivsEtavsPt    = new TH3D("hTrigNegKaonPhivsEtavsPt",    "hTrigNegKaonPhivsEtavsPt;    p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
@@ -277,11 +281,13 @@ struct HistsManager
 		// hDeltaPhivsM->Write();
 
 		hPosKaonPhivsEtavsPt_Gen->Write();
+		hPosKaonPhivsEtavsPt->Write();
 		hMthPosKaonPhivsEtavsPt_Gen->Write();
 		hMthPosKaonPhivsEtavsPt->Write();
 		hTrigPosKaonPhivsEtavsPt->Write();
 
 		hNegKaonPhivsEtavsPt_Gen->Write();
+		hNegKaonPhivsEtavsPt->Write();
 		hMthNegKaonPhivsEtavsPt_Gen->Write();
 		hMthNegKaonPhivsEtavsPt->Write();
 		hTrigNegKaonPhivsEtavsPt->Write();
