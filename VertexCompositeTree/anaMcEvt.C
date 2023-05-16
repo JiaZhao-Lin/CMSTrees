@@ -1,6 +1,6 @@
-#include "../Ultra-Peripheral Collisions/UPC Code/upcJpsiDimu/common/headers.h"
-#include "../Ultra-Peripheral Collisions/UPC Code/upcJpsiDimu/common/funUtil.h"
-#include "../Ultra-Peripheral Collisions/UPC Code/upcJpsiDimu/common/VertexCompositeTree.h"
+#include "./common/headers.h"
+#include "./common/funUtil.h"
+#include "./common/VertexCompositeTree.h"
 
 TH1D *hnEvts;
 TH3D *hVzvsVyvsVx;

@@ -14,7 +14,7 @@ process.options = cms.untracked.PSet(wantSummary = cms.untracked.bool(True))
 
 # Define the input source
 process.source = cms.Source("PoolSource",
-   fileNames = cms.untracked.vstring('file:/eos/cms/store/group/phys_heavyions/jiazhao/STARlight/Reco/STARlight_CohJpsi_Reco/STARlight_CohJpsi2MuMu_PbPb5TeV_GenFilter/STARlight_CohJpsi_Reco/230510_185050/0000/step3_STARlight_Reco_101.root'),
+   fileNames = cms.untracked.vstring('file:/eos/cms/store/group/phys_heavyions/jiazhao/STARlight/Reco/STARlight_CohJpsi_Reco_230516_212400/CRAB_UserFiles/STARlight_CohJpsi_Reco_230516_212400/230516_192413/0000/step3_STARlight_Reco_100.root'),
    inputCommands=cms.untracked.vstring('keep *', 'drop *_hiEvtPlane_*_*')
 )
 process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(-1))
@@ -84,6 +84,6 @@ for P in eventFilterPaths:
     process.schedule.insert(0, P)
 
 # Add recovery for offline primary vertex
-# from HLTrigger.Configuration.CustomConfigs import MassReplaceInputTag
-# process = MassReplaceInputTag(process,"offlinePrimaryVertices","offlinePrimaryVerticesRecovery")
-# process.offlinePrimaryVerticesRecovery.oldVertexLabel = "offlinePrimaryVertices"
+from HLTrigger.Configuration.CustomConfigs import massReplaceInputTag
+process = massReplaceInputTag(process,"offlinePrimaryVertices","offlinePrimaryVerticesRecovery")
+process.offlinePrimaryVerticesRecovery.oldVertexLabel = "offlinePrimaryVertices"

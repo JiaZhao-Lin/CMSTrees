@@ -33,7 +33,7 @@ request_name = "STARlight_CohJpsi_Digi"
 request_name += "_%s" % datetime.now().strftime("%y%m%d_%H%M%S")
 
 # dataset = "/STARlight_CohJpsi2MuMu_PbPb5TeV_GenFilter/phys_heavyions-STARlight_CohJpsi_Digi-e40e02507aab18498ef2ae53eec7f44b/USER"
-input_filelist = "lheFileList/test_GenSim.txt"
+input_filelist = "fileList/CohJpsi_100k_GenSim.txt"
 
 config.General.requestName = request_name
 # config.JobType.maxMemoryMB = 2000

@@ -1,23 +1,74 @@
-*.~
-*.C~
-*.sh~
-*.h~
-*.d
-*.pcm
-*.so
-starlightTrunk_v*
-
+##############################################
+## User files
 *.DS_Store
 *.icloud
 *.vscode
-*.yaml
-*.tar.gz
 __pycache__
+.cache
 .ipynb_checkpoints
 
-*.png
-*.pdf
 *.root
-*.out
+*.txt
+*.dat
+*.pdf
+*.png
+*.jpg
+*.gif
+*.log
+*.yaml
+*.tar
+*.gz
 Test.*
 test.*
+
+##############################################
+## ROOT Compiled files
+*.~
+*.sh~
+*.h~
+*.C~
+*.cpp~
+*.py~
+*.cxx
+*.cxx~
+*.hxx
+*.hxx~
+*.xml~
+*.pcm~
+*.d~
+
+##############################################
+## C++ files
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+*.pcm
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app

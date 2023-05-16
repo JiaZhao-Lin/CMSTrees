@@ -62,7 +62,7 @@ void SkimTree_phi(TString fileName = "inFiles/phi_tree_highBetaStar_noCut.root")
 	// # -----------------------------------------------------------------------------------
 
 
-	int jentry = 0;
+	int jentry = -1;
 	int total_entries = treeReader.GetEntries();
 	while (treeReader.Next()) {
 		jentry++;
