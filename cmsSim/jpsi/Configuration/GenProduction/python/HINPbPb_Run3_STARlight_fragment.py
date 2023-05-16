@@ -15,17 +15,17 @@ generator = cms.EDFilter("Pythia8HadronizerFilter",
 
 muplusfilter = cms.EDFilter("MCSingleParticleFilter",
         Status = cms.untracked.vint32(1, 1),
-        MinPt = cms.untracked.vdouble(0.7, 0.7),
-        MinEta = cms.untracked.vdouble(1.28, -2.42),
-        MaxEta = cms.untracked.vdouble(2.42, -1.28),
+        # MinPt = cms.untracked.vdouble(0.7, 0.7),
+        # MinEta = cms.untracked.vdouble(1.28, -2.42),
+        # MaxEta = cms.untracked.vdouble(2.42, -1.28),
         ParticleID = cms.untracked.vint32(-13, -13),
         )
 
 muminusfilter = cms.EDFilter("MCSingleParticleFilter",
         Status = cms.untracked.vint32(1, 1),
-        MinPt = cms.untracked.vdouble(0.7, 0.7),
-        MinEta = cms.untracked.vdouble(1.28, -2.42),
-        MaxEta = cms.untracked.vdouble(2.42, -1.28),
+        # MinPt = cms.untracked.vdouble(0.7, 0.7),
+        # MinEta = cms.untracked.vdouble(1.28, -2.42),
+        # MaxEta = cms.untracked.vdouble(2.42, -1.28),
         ParticleID = cms.untracked.vint32(13, 13),
         )
 

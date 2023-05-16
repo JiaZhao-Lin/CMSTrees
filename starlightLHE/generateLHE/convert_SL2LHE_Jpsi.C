@@ -112,17 +112,17 @@ void convert_SL2LHE_Jpsi(string infilename = "output_all/slight_CohPsi2S_4Feeddo
                 TLorentzVector motherFourMom = fourMom1 + fourMom2;
                 double y = motherFourMom.Rapidity();
 
-                if(TMath::Abs(y)>1.45 && TMath::Abs(y)<2.45){
-                    if(nAccEvts) output << "</event>" << endl;
-                    output << "<event>" << endl;
+                // if(TMath::Abs(y)>1.45 && TMath::Abs(y)<2.45){
+                if(nAccEvts) output << "</event>" << endl;
+                output << "<event>" << endl;
 
-                    output << NTrk << " 81" << " 1.0 -1.0 -1.0 -1.0" << endl;
-                    for(size_t itrk=0; itrk<px.size(); itrk++){
-                        output << pdg_id[itrk] << " 1" << " 0 0 0 0 " << px[itrk] << " " << py[itrk] << " " << pz[itrk] << " " << e[itrk] << " " << mass[itrk] << " 0.0 9.0" << endl; 
-                    }
-
-                    nAccEvts++;
+                output << NTrk << " 81" << " 1.0 -1.0 -1.0 -1.0" << endl;
+                for(size_t itrk=0; itrk<px.size(); itrk++){
+                    output << pdg_id[itrk] << " 1" << " 0 0 0 0 " << px[itrk] << " " << py[itrk] << " " << pz[itrk] << " " << e[itrk] << " " << mass[itrk] << " 0.0 9.0" << endl; 
                 }
+
+                nAccEvts++;
+                // }
             }
             else{
                 cout<<"The first two tracks are not muons !"<<endl;
