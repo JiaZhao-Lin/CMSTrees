@@ -21,7 +21,7 @@ process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(-1))
 
 # Set the global tag
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
-process.GlobalTag.globaltag = cms.string('130X_mcRun3_2023_realistic_HI_v14')
+process.GlobalTag.globaltag = cms.string('130X_mcRun3_2023_realistic_HI_v8')
 
 # Add PbPb centrality
 process.load("RecoHI.HiCentralityAlgos.CentralityBin_cfi")

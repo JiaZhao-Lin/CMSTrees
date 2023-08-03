@@ -3,6 +3,7 @@
 This repository contains code for opening ROOT trees.
 
 # STARlight Simulation
+
 ## 1. Install STARlight
 One can either execute "./compileSTARlight.sh 313" to automatically compile the STARlight v3.13 
 or compile STARlight step by step following the instruction in 'https://starlight.hepforge.org'
@@ -16,7 +17,9 @@ or compile STARlight step by step following the instruction in 'https://starligh
     * one can directly execute `./starlight` under 'starlightTrunk_v313/build' directory to generate STARlight output (slight.out) after finishing previous steps.Please see the desciption of output in 'https://starlight.hepforge.org' or section 8 of the STAR manual [Comput. Phys. Commun. 212 (2017) 258].
     * there is a simple macro, sitting in 'starlightLHE/anaSTARlightOutput' directory, to analyze STARlight output
     
+
 ## 2. Convert plain STARlight output file to CMS LHE file
+
 (take coherent Jpsi as an example)
 
 To save computing time, the plain STARlight output file with large statistics should be splitted into many small files for job submission in lxplus cluster. The most time-consuming step in CMS simulation chain (GENSIM->DIGIRAW->RECO) is DIGIRAW, the input statistics of DIGIRAW step is better not to exceed 2000 events for UPC simulation without embedding. One could apply filters in 'STARlight output file --> LHE file' and GENSIM steps, therefore, one needs to evaluate the statistics for each small plain STARlight output file.
@@ -28,8 +31,8 @@ To save computing time, the plain STARlight output file with large statistics sh
 1. under 'generateLHE' directory, execute `./convertLHE.sh CohJpsi` to convert the splitted STARlight output files to CMS LHE files. This script calls 'convert_SL2LHE.C' macro, one can directly run this macro by using 'root -l -b -q convert_SL2LHE.C', of course, a valid input file is needed. In this step, one can apply some additional filters in convert_SL2LHE.C, e.g., pair rapidity filter, kinematic filter of daughters etc. The kinematic filter of daughter particle is not recommended, because one needs to evaluate detector acceptance in Jpsi analysis. **NOTE: Please edit convert_SL2LHE.C since there might have some acceptance cuts**
 
 
-
 # $J/\psi$ CMS Simulation
+
 ## 1. Set up CMS environment 
 1. In lxplus work area (In general, the exactly same CMSSW package as that in official real data production should be used.) Do `cmsrel CMSSW_13_0_X`. Only needs to be done once
 1. `cd CMSSW_13_0_X/src` and `cmsenv`
@@ -48,23 +51,8 @@ process.GlobalTag.toGet.extend([cms.PSet(record = cms.string('L1TUtmTriggerMenuR
 
 ## 3. Submit crab job
 1. `crab submit crabConfig_STARlight_GenSim.py` and copy the directory after the "OutputDirectory" output message
-1. `./getFileList.sh OutputDirectory fileList/CohJpsi_100k_GenSim.txt` OutputDirectory is the file directory output by GenSim step. the second command is the output file list text file. the file list is to be read by the next crab job as the input file list.
+1. `./getFileList.sh OutputDirectory lheFileList/CohJpsi_100k_GenSim.txt` OutputDirectory is the file directory output by GenSim step. the second command is the output file list text file. the file list is to be read by the next crab job as the input file list.
 1. `crab submit crabConfig_STARlight_Digi.py`
-1. `./getFileList.sh OutputDirectory fileList/CohJpsi_100k_Digi.txt`
+1. `./getFileList.sh OutputDirectory lheFileList/CohJpsi_100k_Digi.txt`
 1. `crab submit crabConfig_STARlight_Reco.py`
-1. `./getFileList.sh OutputDirectory fileList/CohJpsi_100k_Reco.txt`
-
-
-
-# Notes
-## Run 3 specifics
-1. Change the "--era" to Run3_pp_on_PbPb
-1. Change the "--conditions" to 130X_mcRun3_2023_realistic_HI_v14
-1. Change the "--beamspot" to  Realistic2022PbPbCollision
-1. Change the beam energy to 5.36 TeV (this might require to remake the LHE files you used as input and change the fragment file)
-
-## Others
-1. Edit the name of the input hole file
-1. “fileNames = cms.untracked.vstring()”
-1. Use file: follow by the location
-1. Please change the Configuration python file when modifying collision energy and filter
+1. `./getFileList.sh OutputDirectory lheFileList/CohJpsi_100k_Reco.txt`
