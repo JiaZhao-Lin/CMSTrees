@@ -34,7 +34,7 @@ request_name = "STARlight_CohJpsi_SkimAndTree"
 request_name += "_%s" % datetime.now().strftime("%y%m%d_%H%M%S")
 
 # dataset = "/STARlight_CohJpsi2MuMu_PbPb5TeV_GenFilter/phys_heavyions-STARlight_CohJpsi_Digi-e40e02507aab18498ef2ae53eec7f44b/USER"
-input_filelist = "/afs/cern.ch/user/j/jiazhao/CMSSW_13_0_5_patch2/src/submitJob/lheFileList/test_Reco.txt"
+input_filelist = "/afs/cern.ch/user/j/jiazhao/CMSSW_13_0_9/src/submitJob/fileList/CohJpsi_100k_Reco.txt"
 
 config.General.requestName = request_name
 # config.JobType.maxMemoryMB = 2000
