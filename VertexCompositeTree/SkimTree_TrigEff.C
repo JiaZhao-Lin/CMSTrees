@@ -1,91 +1,146 @@
-#include "common/headers.h"
-#include "common/funUtil.h"
-#include "common/VertexCompositeTree.h"
 #include "Selections.C"
 
-const std::vector<int> trigIdxes = {0, 1, 2, 3, 4, 5, 6, 7};
-const int nTrig = trigIdxes.size();
+
+//================================================================================================
+//== Global Variables
+const std::vector<int> HLT_TrigIdx = {0, 8, 10, 13};
+const int nTrig = HLT_TrigIdx.size();
 
 TH1D *hnEvts;
-TH3D* hPhivsEtavsPt_Gen;
-TH3D* hMvsPtvsRap_Gen;
-TH3D* hPosMuPhivsEtavsPt_Gen;
-TH3D* hMthPosMuPhivsEtavsPt_Gen;
-TH3D* hMthPosMuPhivsEtavsPt;
-TH3D* hNegMuPhivsEtavsPt_Gen;
-TH3D* hMthNegMuPhivsEtavsPt_Gen;
-TH3D* hMthNegMuPhivsEtavsPt;
+TH3D *hPtvsEtavsPhi;
+TH3D *hPtvsRapvsPhi;
+std::vector<TH3D*> vPtvsEtavsPhi_trigHLT(nTrig);
+std::vector<TH3D*> vPtvsRapvsPhi_trigHLT(nTrig);
+std::vector<TH1D*> vPt_trigHLT_Eff(nTrig);
 
-std::vector<TH3D*> hTrigPosMuPhivsEtavsPt_vec(nTrig);
-std::vector<TH3D*> hTrigNegMuPhivsEtavsPt_vec(nTrig);
 
+//== Functions ====================================================================================
 void bookHistos()
 {
-	const Int_t    mHistRapBins     = 60;
-	const Double_t mHistRapLow      = -3;
-	const Double_t mHistRapHi       = 3;
-
-	const Int_t    mHistPtBins      = 800;
-	const Double_t mHistPtLow       = 0;
-	const Double_t mHistPtHi        = 4;
-	
-	const Int_t    mHistMassBins    = 300;
-	const Double_t mHistMassLow     = 2;
-	const Double_t mHistMassHi      = 5;
-
-	const Int_t nPtBins = 25;
-	Double_t    Pt[nPtBins+1] = {0, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 3.0, 3.2, 3.6, 4.0};
-
-	const Int_t nEtaBins = 100;
-	Double_t Eta[nEtaBins+1];
-	Double_t mEtaLow = -2.5, mEtaHi = 2.5;
-	Double_t mEtaStep = (mEtaHi - mEtaLow)/nEtaBins;
-
-	for(Int_t ieta=0; ieta<=nEtaBins; ieta++)
-	{
-		Eta[ieta] = mEtaLow + ieta*mEtaStep;
-	}
-
-	const Int_t nPhiBins = 60;
-	Double_t Phi[nPhiBins+1];
-	Double_t mPhiLow  = -PI, mPhiHi = PI;
-	Double_t mPhiStep = (mPhiHi - mPhiLow)/nPhiBins;
-
-	for(Int_t iphi=0; iphi<=nPhiBins; iphi++)
-	{
-		Phi[iphi] = mPhiLow + iphi*mPhiStep;
-	}
-
 	// event level
 	hnEvts = new TH1D("hnEvts", "hnEvts;", 5, 0, 5);
 	hnEvts->GetXaxis()->SetBinLabel(1, "trigEvt");
 	hnEvts->GetXaxis()->SetBinLabel(2, "validVtx & !Beam-halo");
 	hnEvts->GetXaxis()->SetBinLabel(3, "HFMaxE <= 7.6(7.3) GeV");
 	hnEvts->GetXaxis()->SetBinLabel(4, "N_{trk}^{HP} == 2");
+	hnEvts->GetXaxis()->SetBinLabel(5, "Dimuon Reconstructed");
 	hnEvts->GetXaxis()->LabelsOption("d");
-	hnEvts->GetXaxis()->SetLabelSize(0.06);
+	hnEvts->GetXaxis()->SetLabelSize(0.04);
 
-	hPhivsEtavsPt_Gen   	 	= new TH3D("hPhivsEtavsPt_Gen", "hPhivsEtavsPt_Gen; p_{T} (GeV/c); #eta; #phi", 500, 0, 5, 300, -3, 3, 180, -PI, PI);;
-	hMvsPtvsRap_Gen				= new TH3D("hMvsPtvsRap_Gen", "hMvsPtvsRap_Gen; Rapidity; p_{T} (GeV/c); M_{#mu#mu} (GeV/c^{2})", mHistRapBins, mHistRapLow, mHistRapHi, mHistPtBins, mHistPtLow, mHistPtHi, mHistMassBins, mHistMassLow, mHistMassHi);
+	const int nBins_Pt  = 50;
+	const double BinsLow_Pt  = 0.0;
+	const double BinsHigh_Pt = 1;
 
-	hPosMuPhivsEtavsPt_Gen    	= new TH3D("hPosMuPhivsEtavsPt_Gen",    "hPosMuPhivsEtavsPt_Gen;    p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
-	hMthPosMuPhivsEtavsPt_Gen 	= new TH3D("hMthPosMuPhivsEtavsPt_Gen", "hMthPosMuPhivsEtavsPt_Gen; p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
-	hMthPosMuPhivsEtavsPt     	= new TH3D("hMthPosMuPhivsEtavsPt",     "hMthPosMuPhivsEtavsPt;     p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
-	hNegMuPhivsEtavsPt_Gen    	= new TH3D("hNegMuPhivsEtavsPt_Gen",    "hNegMuPhivsEtavsPt_Gen;    p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
-	hMthNegMuPhivsEtavsPt_Gen 	= new TH3D("hMthNegMuPhivsEtavsPt_Gen", "hMthNegMuPhivsEtavsPt_Gen; p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
-	hMthNegMuPhivsEtavsPt     	= new TH3D("hMthNegMuPhivsEtavsPt",     "hMthNegMuPhivsEtavsPt;     p_{T} (GeV/c); #eta; #phi", nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
+	const int nBins_Eta = 40;
+	const double BinsLow_Eta = -4;
+	const double BinsHigh_Eta = 4;
+	
+	const int nBins_Phi = 30;
+	const double BinsLow_Phi = -PI;
+	const double BinsHigh_Phi = PI;
+	
+	const int nBins_Rap = 60;
+	const double BinsLow_Rap = -3;
+	const double BinsHigh_Rap = 3;
 
-	for (int i = 0; i < nTrig; i++)
+	hPtvsEtavsPhi    = new TH3D("hPtvsEtavsPhi",	"hPtvsEtavsPhi;	p_{T} (GeV/c);	#eta;	#phi", nBins_Pt, BinsLow_Pt, BinsHigh_Pt, nBins_Eta, BinsLow_Eta, BinsHigh_Eta, nBins_Phi, BinsLow_Phi, BinsHigh_Phi);
+	hPtvsRapvsPhi    = new TH3D("hPtvsRapvsPhi",	"hPtvsRapvsPhi;	p_{T} (GeV/c);	y;	#phi", nBins_Pt, BinsLow_Pt, BinsHigh_Pt, nBins_Rap, BinsLow_Rap, BinsHigh_Rap, nBins_Phi, BinsLow_Phi, BinsHigh_Phi);
+	for (int iTrig = 0; iTrig < nTrig; ++iTrig)
 	{
-		hTrigPosMuPhivsEtavsPt_vec[i] = new TH3D(Form("hTrigPosMuPhivsEtavsPt_trigIdx%d", trigIdxes[i]), Form("hTrigPosMuPhivsEtavsPt_trigIdx%d; p_{T} (GeV/c); #eta; #phi", trigIdxes[i]), nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
-		hTrigNegMuPhivsEtavsPt_vec[i] = new TH3D(Form("hTrigNegMuPhivsEtavsPt_trigIdx%d", trigIdxes[i]), Form("hTrigNegMuPhivsEtavsPt_trigIdx%d; p_{T} (GeV/c); #eta; #phi", trigIdxes[i]), nPtBins, Pt, nEtaBins, Eta, nPhiBins, Phi);
+		vPtvsEtavsPhi_trigHLT[iTrig] = new TH3D(Form("hPtvsEtavsPhi_trigHLT%d", iTrig), Form("hPtvsEtavsPhi_trigHLT%d;	p_{T} (GeV/c);	#eta;	#phi", iTrig), nBins_Pt, BinsLow_Pt, BinsHigh_Pt, nBins_Eta, BinsLow_Eta, BinsHigh_Eta, nBins_Phi, BinsLow_Phi, BinsHigh_Phi);
+		vPtvsRapvsPhi_trigHLT[iTrig] = new TH3D(Form("hPtvsRapvsPhi_trigHLT%d", iTrig), Form("hPtvsRapvsPhi_trigHLT%d;	p_{T} (GeV/c);	y;	#phi", iTrig), nBins_Pt, BinsLow_Pt, BinsHigh_Pt, nBins_Rap, BinsLow_Rap, BinsHigh_Rap, nBins_Phi, BinsLow_Phi, BinsHigh_Phi);
 	}
+
 }
 
+TH1D *cal_eff(TH1D *hPass, TH1D *hTotal)
+{
+	TH1D *hEff = (TH1D*)hPass->Clone();
+	hEff->SetTitle(Form("%s_eff; %s; Efficiency", hPass->GetName(), hPass->GetXaxis()->GetTitle()));
+	hEff->Divide(hPass, hTotal, 1, 1, "B");
+	return hEff;
+}
+
+void draw_latex(double latex_x, double latex_y, TString latex_text)
+{
+	TLatex *latex = new TLatex();
+	latex->SetNDC();
+	latex->SetTextFont(42);
+	latex->SetTextSize(0.04);
+	latex->SetTextAlign(31);
+	latex->DrawLatex(latex_x, latex_y, Form("%s", latex_text.Data()));
+}
+
+void draw_header_Run3()
+{
+	TLatex *latex = new TLatex();
+	latex->SetNDC();
+	latex->SetTextFont(42);
+	latex->SetTextSize(0.04);
+	latex->DrawLatex(0.10, 0.92, "#bf{CMS} #it{Simulation}");
+	latex->DrawLatex(0.63, 0.92, "PbPb Run3 (5.36 TeV)");
+}
+
+std::vector<TH1D*> pipeline_draw_HLT_TrigEff(std::vector<TH3D*> vh3Num, TH3D * h3Den, TString project, TString name)
+{
+	//* Project the 3D histogram to 1D histogram and calculate the efficiency
+	std::vector<TH1D*> vh1Eff;
+	auto h1Den = (TH1D*)h3Den->Project3D(project);
+
+	for (int iTrig = 0; iTrig < nTrig; ++iTrig)
+	{
+		auto h1Num = (TH1D*) vh3Num[iTrig]->Project3D(project);
+		vh1Eff.push_back(cal_eff(h1Num, h1Den));
+	}
+
+	//* Draw the frame
+	auto c = new TCanvas("c", "", 800, 600);
+	//stat box and disable title
+	gStyle->SetOptStat(0);
+	gStyle->SetOptTitle(0);
+
+	//* Draw the legend
+	auto legend = new TLegend(0.3, 0.6, 0.4, 0.8);
+	legend->SetBorderSize(0);
+	legend->SetFillStyle(0);
+	// legend->SetTextFont(42);
+	legend->SetTextSize(0.02);
+
+	//* Draw the efficiency for each trigger
+	for (int iTrig = 0; iTrig < nTrig; ++iTrig)
+	{
+		vh1Eff[iTrig]->GetYaxis()->SetRangeUser(0, 1.1);
+		vh1Eff[iTrig]->SetLineColor(iTrig + 1);
+		vh1Eff[iTrig]->Draw("same");
+
+		//* Draw the legend
+		legend->AddEntry(vh1Eff[iTrig], Form("%s", HLT_TRIG_LIST[HLT_TrigIdx[iTrig]].Data()), "l");
+	}
+	legend->Draw("same");
+
+	//* Draw a line at y = 1
+	TLine *line = new TLine(vh1Eff[0]->GetXaxis()->GetXmin(), 1, vh1Eff[0]->GetXaxis()->GetXmax(), 1);
+	line->SetLineColor(kRed);
+	line->SetLineStyle(2);
+	line->SetLineWidth(2);
+	line->Draw("same");
+
+	draw_header_Run3();
+
+	c->SaveAs(Form("./outFigures/Eff_HLT_Trig_%s.pdf", project.Data()));
+
+	hnEvts->Draw();
+	draw_latex(0.89, 0.20, Form("Total Evt: %.0f", hnEvts->GetBinContent(5)));
+	c->SaveAs(Form("./outFigures/Eff_HLT_Trig_%s_nEvts.pdf", project.Data()));
+
+	return vh1Eff;
+}
+
+//== Main =========================================================================================
 void SkimTree_TrigEff()
 {
 	TH1::SetDefaultSumw2(kTRUE);
-	const TString inputFileDir = "inFiles/dimuana_mc_CohJpsi_test.root";
+	const TString inputFileDir = "inFiles/VCTree_STARLIGHT_CohJpsiToMuMu_5p36TeV_Run3.root";
 	TFile *inputFile = new TFile(inputFileDir, "READ");
 
 	const TString TreeDir = "dimucontana_mc/VertexCompositeNtuple";
@@ -107,6 +162,16 @@ void SkimTree_TrigEff()
 	TTreeReaderArray<Float_t>				PhiD1_gen(treeReader,			"PhiD1_gen");
 	TTreeReaderArray<Float_t>				PhiD2_gen(treeReader,			"PhiD2_gen");
 
+	TTreeReaderValue<UInt_t>				candSize(treeReader,		"candSize");
+	TTreeReaderArray<Short_t>				chargeD1(treeReader,		"chargeD1");
+	TTreeReaderArray<Short_t>				chargeD2(treeReader,		"chargeD2");
+	TTreeReaderArray<Float_t>				pTD1(treeReader,			"pTD1");
+	TTreeReaderArray<Float_t>				pTD2(treeReader,			"pTD2");
+	TTreeReaderArray<Float_t>				EtaD1(treeReader,			"EtaD1");
+	TTreeReaderArray<Float_t>				EtaD2(treeReader,			"EtaD2");
+	TTreeReaderArray<Float_t>				PhiD1(treeReader,			"PhiD1");
+	TTreeReaderArray<Float_t>				PhiD2(treeReader,			"PhiD2");
+
 	TTreeReaderValue<UInt_t>				candSize_mu(treeReader,				"candSize_mu");
 	TTreeReaderArray<Bool_t>				softMuon_mu(treeReader,				"softMuon_mu");
 	TTreeReaderArray<Float_t>				pT_mu(treeReader,					"pT_mu");
@@ -115,7 +180,7 @@ void SkimTree_TrigEff()
 
 	TTreeReaderValue<std::vector< std::vector<UChar_t> >>
 											trigMuon_mu(treeReader,				"trigMuon_mu");
-
+	TTreeReaderArray<Bool_t>				trigHLT(treeReader,					"trigHLT");
 	// =======================================================================================
 
 
@@ -128,14 +193,11 @@ void SkimTree_TrigEff()
 		if (jentry % (treeReader.GetEntries() / 10) == 0)
 			cout << "begin " << jentry << "th entry...." << endl;
 
-		Int_t   nTrkHP       = *NtrkHP;
+		hnEvts->Fill(0.5);
 
-		hnEvts               ->Fill(0.5);
-
+		//= Event Level Selections ============================================================
 		// Select Event - require this event has a valid vertex and is not beam-halo event
-		//if(!csTree.evtSel()[2] || !csTree.evtSel()[3]) continue;
-		Bool_t goodVtx = (evtSel[2] && evtSel[3]);
-		if(goodVtx) hnEvts->Fill(1.5);
+		Bool_t goodVtx				= (evtSel[2] && evtSel[3]);
 
 		//evtSel[4-15]
 		//[4]=0: HFPlusMaxTower < 3 GeV;  [4]=1: HFPlusMaxTower > 3 GeV
@@ -146,120 +208,62 @@ void SkimTree_TrigEff()
 		//[12] is for Plus & [13] is for Minus; Threshold = 7 GeV
 		//[14] is for Plus & [15] is for Minus; Threshold = 8 GeV
 		//[16] is for Plus (Th = 7.6 GeV) & [17] is for Minus (Th = 7.3 GeV);
+		Bool_t goodHFVeto 			= (!evtSel[16] && !evtSel[17]);
+		Bool_t passNTrkHP 			= *NtrkHP == 2;
+		Bool_t passEvtSel 			= goodVtx && goodHFVeto && passNTrkHP;
+		Bool_t passNRecoCandidate 	= *candSize == 1;
 
-		if(evtSel[16] || evtSel[17]) continue;
-		Bool_t goodHFVeto = (!evtSel[16] && !evtSel[17]);
-		if(goodVtx & goodHFVeto) hnEvts->Fill(2.5);
+		if (goodVtx)				hnEvts->Fill(1.5);
+		if (goodVtx && goodHFVeto)	hnEvts->Fill(2.5);
+		if (passEvtSel) 			hnEvts->Fill(3.5);
+		if (passNRecoCandidate)		hnEvts->Fill(4.5);
 
-		//if(nTrkHP != 2) continue;
+		if (!passEvtSel) 			continue;
+		if (!passNRecoCandidate) 	continue;
 
-		Bool_t passEvtSel = goodVtx && goodHFVeto && (nTrkHP==2);
-
-		if(passEvtSel) hnEvts->Fill(3.5);
-
-		// Loop over the correct-sign candidates
-		Int_t nSoftMuon = 0;
-		for (UInt_t icand = 0; icand < *candSize_gen; icand++)
+		//= Fill HLT Trig Eff Hist ===================================================
+		for (UInt_t icand = 0; icand < *candSize; icand++)
 		{
-			Double_t posPt_gen  = chargeD1_gen[icand] > 0 ? pTD1_gen[icand]  : pTD2_gen[icand];
-			Double_t posEta_gen = chargeD1_gen[icand] > 0 ? EtaD1_gen[icand] : EtaD2_gen[icand];
-			Double_t posPhi_gen = chargeD1_gen[icand] > 0 ? PhiD1_gen[icand] : PhiD2_gen[icand];
-			Double_t negPt_gen  = chargeD1_gen[icand] < 0 ? pTD1_gen[icand]  : pTD2_gen[icand];
-			Double_t negEta_gen = chargeD1_gen[icand] < 0 ? EtaD1_gen[icand] : EtaD2_gen[icand];
-			Double_t negPhi_gen = chargeD1_gen[icand] < 0 ? PhiD1_gen[icand] : PhiD2_gen[icand];
+			//* Get the four-momentum of the pair
+			Double_t posPt  = chargeD1[icand] > 0 ? pTD1[icand]  : pTD2[icand];
+			Double_t posEta = chargeD1[icand] > 0 ? EtaD1[icand] : EtaD2[icand];
+			Double_t posPhi = chargeD1[icand] > 0 ? PhiD1[icand] : PhiD2[icand];
+			Double_t negPt  = chargeD1[icand] < 0 ? pTD1[icand]  : pTD2[icand];
+			Double_t negEta = chargeD1[icand] < 0 ? EtaD1[icand] : EtaD2[icand];
+			Double_t negPhi = chargeD1[icand] < 0 ? PhiD1[icand] : PhiD2[icand];
 
-			hPhivsEtavsPt_Gen      ->Fill(posPt_gen, posEta_gen, posPhi_gen);
-			hPhivsEtavsPt_Gen      ->Fill(negPt_gen, negEta_gen, negPhi_gen);
+			TLorentzVector posFourMom, negFourMom, pairFourMom;
+			posFourMom.SetPtEtaPhiM(posPt, posEta, posPhi, MASS_MUON);
+			negFourMom.SetPtEtaPhiM(negPt, negEta, negPhi, MASS_MUON);
+			pairFourMom = posFourMom + negFourMom;
 
-			hPosMuPhivsEtavsPt_Gen ->Fill(posPt_gen, posEta_gen, posPhi_gen);
-			hNegMuPhivsEtavsPt_Gen ->Fill(negPt_gen, negEta_gen, negPhi_gen);
+			Double_t pt		= pairFourMom.Pt();
+			Double_t eta	= pairFourMom.Eta();
+			Double_t phi	= pairFourMom.Phi();
+			Double_t mass	= pairFourMom.M();
+			Double_t rap	= pairFourMom.Rapidity();
 
-			TLorentzVector posFourMom_gen, negFourMom_gen, pairFourMom_gen;
-			posFourMom_gen.SetPtEtaPhiM(posPt_gen, posEta_gen, posPhi_gen, MASS_MUON);
-			negFourMom_gen.SetPtEtaPhiM(negPt_gen, negEta_gen, negPhi_gen, MASS_MUON);
-			pairFourMom_gen = posFourMom_gen + negFourMom_gen;
+			//= Dimuon Selections ============================================================
+			if (abs(rap) > 2.4) continue;
 
-			Double_t pt_gen   = pairFourMom_gen.Pt();
-			Double_t eta_gen  = pairFourMom_gen.Eta();
-			Double_t phi_gen  = pairFourMom_gen.Phi();
-			Double_t mass_gen = pairFourMom_gen.M();
-			Double_t y_gen    = pairFourMom_gen.Rapidity();
+			//* fill denominator of HLT trig eff
+			hPtvsEtavsPhi	->Fill(pt,	eta,	phi);
+			hPtvsRapvsPhi	->Fill(pt,	rap,	phi);
 
-			hMvsPtvsRap_Gen        ->Fill(y_gen, pt_gen,     mass_gen);
-
-			Double_t posMthDeltaR = 99999999.;
-			Double_t negMthDeltaR = 99999999.;
-			Int_t    posRecoIdx   = -1;
-			Int_t    negRecoIdx   = -1;
-
-			for(UInt_t imu=0; imu < *candSize_mu; imu++)
+			//* fill numerator of HLT trig eff for each trigger
+			for (int iTrig = 0; iTrig < nTrig; ++iTrig)
 			{
-				if( !softMuon_mu[imu] ) continue;
-
-				if( icand==0 ) nSoftMuon++;
-
-				Double_t muPt  = pT_mu[imu];
-				Double_t muEta = eta_mu[imu];
-				Double_t muPhi = phi_mu[imu];
-
-				TVector3 Mom_rec; Mom_rec.SetPtEtaPhi(muPt, muEta, muPhi);
-				TVector3 posMom_gen = posFourMom_gen.Vect();
-				TVector3 negMom_gen = negFourMom_gen.Vect();
-
-				if ( RecGenMatched(Mom_rec, posMom_gen, posMthDeltaR) )
+				if (trigHLT[HLT_TrigIdx[iTrig]])
 				{
-					posMthDeltaR = posMom_gen.DeltaR(Mom_rec);
-					posRecoIdx   = imu;
-				}
-				if (RecGenMatched(Mom_rec, negMom_gen, negMthDeltaR))
-				{
-					negMthDeltaR = negMom_gen.DeltaR(Mom_rec);
-					negRecoIdx   = imu;
+					vPtvsEtavsPhi_trigHLT[iTrig]->Fill(pt, eta, phi);
+					vPtvsRapvsPhi_trigHLT[iTrig]->Fill(pt, rap, phi);
 				}
 			}
-
-			if(posRecoIdx>=0 && negRecoIdx>=0 && posRecoIdx == negRecoIdx)
-			{
-				cout<<"One reco-track is matched to multiple gen-tracks !"<<endl;
-			}
-
-			if( posRecoIdx>=0 )
-			{
-				Double_t muPt     = pT_mu[posRecoIdx];
-				Double_t muEta    = eta_mu[posRecoIdx];
-				Double_t muPhi    = phi_mu[posRecoIdx];
-
-				hMthPosMuPhivsEtavsPt_Gen ->Fill(posPt_gen, posEta_gen, posPhi_gen);
-				hMthPosMuPhivsEtavsPt     ->Fill(muPt,      muEta,      muPhi     );
-
-
-				cout<<trigMuon_mu->size()<<endl;
-				// for (int iTrig = 0; iTrig < nTrig; ++iTrig)
-				// {
-				// 	if (trigMuon_mu->at(trigIdxes[iTrig]).at(posRecoIdx))
-				// 	{
-				// 		hTrigPosMuPhivsEtavsPt_vec[iTrig]->Fill(muPt, muEta, muPhi);
-				// 	}
-				// }
-			}
-
-			// if(negRecoIdx>=0)
-			// {
-			// 	Double_t muPt     = pT_mu()[negRecoIdx];
-			// 	Double_t muEta    = eta_mu()[negRecoIdx];
-			// 	Double_t muPhi    = phi_mu()[negRecoIdx];
-
-			// 	hMthNegMuPhivsEtavsPt_Gen->Fill(negPt_gen, negEta_gen, negPhi_gen);
-			// 	hMthNegMuPhivsEtavsPt->Fill(muPt, muEta, muPhi);
-
-			// 	for (int iTrig = 0; iTrig < nTrig; ++iTrig)
-			// 	{
-			// 		if (trigMuon_mu()[iTrig][negRecoIdx])
-			// 		{
-			// 			hTrigNegMuPhivsEtavsPt_vec[iTrig]->Fill(muPt, muEta, muPhi);
-			// 		}
-			// 	}
-			// }
 		}
 	}
+
+	//= Calculate HLT Trig Eff in Pt===================================================
+	pipeline_draw_HLT_TrigEff(vPtvsRapvsPhi_trigHLT, hPtvsRapvsPhi, "x", "");
+	pipeline_draw_HLT_TrigEff(vPtvsRapvsPhi_trigHLT, hPtvsRapvsPhi, "y", "");
+	pipeline_draw_HLT_TrigEff(vPtvsRapvsPhi_trigHLT, hPtvsRapvsPhi, "z", "");
 }

@@ -33,17 +33,21 @@ config.Site.storageSite = 'T2_CH_CERN'
 request_name = "STARlight_CohJpsi_SkimAndTree"
 request_name += "_%s" % datetime.now().strftime("%y%m%d_%H%M%S")
 
-# dataset = "/STARlight_CohJpsi2MuMu_PbPb5TeV_GenFilter/phys_heavyions-STARlight_CohJpsi_Digi-e40e02507aab18498ef2ae53eec7f44b/USER"
-input_filelist = "/afs/cern.ch/user/j/jiazhao/CMSSW_13_0_9/src/submitJob/fileList/CohJpsi_100k_Reco.txt"
-
 config.General.requestName = request_name
+config.Data.outputDatasetTag = config.General.requestName
+config.Data.outLFNDirBase = '/store/group/phys_heavyions/jiazhao/STARlight/SkimAndTree/%s' %  config.General.requestName
 # config.JobType.maxMemoryMB = 2000
 # config.JobType.maxJobRuntimeMin = 1000
 # config.Data.inputDataset = dataset
-config.Data.userInputFiles = open(input_filelist).readlines() 
-config.Data.outputDatasetTag = config.General.requestName
-config.Data.outLFNDirBase = '/store/group/phys_heavyions/jiazhao/STARlight/SkimAndTree/%s' %  config.General.requestName
 
-# print("Submitting CRAB job for: "+dataset)
-print("Submitting CRAB job for: "+input_filelist)
+#* Dataset **************************************************************
+dataset = "/CohJPsi_STARLIGHT_5p36TeV_2023Run3/phys_heavyions-CohJPsi_STARLIGHT_5p36TeV_2023Run3_RECO_20230812-0e0f7c8639a89ace3f1b7064824b102c/USER"
+config.Data.inputDataset = dataset
+print("Submitting CRAB job for: "+dataset)
+
+#* FileList *************************************************************
+# input_filelist = "/afs/cern.ch/user/j/jiazhao/CMSSW_13_0_9/src/submitJob/fileList/CohJpsi_100k_Reco.txt"
+# config.Data.userInputFiles = open(input_filelist).readlines() 
+# print("Submitting CRAB job for: "+input_filelist)
+
 print('OutputDirectory: '+config.Data.outLFNDirBase)
