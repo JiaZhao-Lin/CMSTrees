@@ -54,12 +54,51 @@ process.GlobalTag.toGet.extend([cms.PSet(record = cms.string('L1TUtmTriggerMenuR
 1. `crab submit crabConfig_STARlight_Reco.py`
 1. `./getFileList.sh OutputDirectory fileList/CohJpsi_100k_Reco.txt`
 
+# Official $J/\psi$ CMS Simulation
+For Run3, STARlight Production should be submitted using official CMS production instructions.
+See the Twiki page for the latest information:
+https://twiki.cern.ch/twiki/bin/viewauth/CMS/STARlightINFO
+
+## 1. Getting The STARlight Samples Tarball 
+The Current STARlight version: v3.17
+
+1. First log into a SL8 lxplus machine: `ssh USERNAME@lxplus8.cern.ch`
+1. Then clone the git repository: `git clone https://github.com/cms-sw/genproductions.git && cd genproductions/bin/Starlight`
+1. Copy the slight.in file to the directory: production/PbPb_5p36TeV/slight_CohJpsiToMuMu_Run3.in (**NOTE: Make sure that there are NO ">" or "<" or "-->" characters in the input file (even under a comment line), since that will cause the LHE file to be invalid**)
+1. 2023 MC production (el8_amd64_gcc11 , CMSSW_13_0_X) NEEDS TO BE UPDATED `./gridpack_generation.sh production/PbPb_5p36TeV/slight_CohJpsiToMuMu_Run3.in el8_amd64_gcc11 CMSSW_13_0_12`
+1. If needed, you can test the tarball by running: `./run_generic_tarball_cvmfs.sh ${PWD}/{TARBALL NAME}.tgz 10 1234`
+
+## 2. Set up the CMS environment
+
+1. `cmsrel CMSSW_13_0_12`
+1. `cd CMSSW_13_0_12/src && cmsenv`
+1. move the "Configuration" and "genPythonCfg_cmsDriver.sh" to CMSSW_13_0_12/src
+1. `scram b -j 8`
+
+## 3. Run the CMS Simulation
+**NOTE: Please edit the python file under the Configureation directory since there might have some acceptance cuts and energy setting**
+1. execute `./genPythonCfg_cmsDriver.sh` to generate the python configration files for GENSIM(mc_step1), DIGIRAW(mc_step2), and RECO(mc_step3).
+1. `mkdir submitJob`
+1. move the tarball to submitJob
+1. move the three python files (step*.py) to 'submitJob' directory and 'cd submitJob'
+1. do some local test by executing for GENSIM, DIGIRAW, and RECO steps, respectively:
+    * `cmsRun step1_STARlight_LHE_GenSim_cfg.py`
+    * `cmsRun step2_STARlight_Digi_cfg.py`
+    * `cmsRun step3_STARlight_Reco_cfg.py`
+
+## 4. Submit the CRAB jobs
+1. `crab submit crabConfig_STARlight_GenSim.py` and copy the directory after the "OutputDirectory" output message
+1. `./getFileList.sh OutputDirectory fileList/STARlight_CohJpsiToMuMu_GenSim.txt` OutputDirectory is the file directory output by GenSim step. the second command is the output file list text file. the file list is to be read by the next crab job as the input file list.
+1. `crab submit crabConfig_STARlight_Digi.py`
+1. `./getFileList.sh OutputDirectory fileList/STARlight_CohJpsiToMuMu_Digi.txt`
+1. `crab submit crabConfig_STARlight_Reco.py`
+1. `./getFileList.sh OutputDirectory fileList/STARlight_CohJpsiToMuMu_Reco.txt`
 
 
 # Notes
 ## Run 3 specifics
 1. Change the "--era" to Run3_pp_on_PbPb
-1. Change the "--conditions" to 130X_mcRun3_2023_realistic_HI_v14
+1. Change the "--conditions" to 130X_mcRun3_2023_realistic_HI_v15
 1. Change the "--beamspot" to  Realistic2022PbPbCollision
 1. Change the beam energy to 5.36 TeV (this might require to remake the LHE files you used as input and change the fragment file)
 
