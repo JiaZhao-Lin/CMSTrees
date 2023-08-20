@@ -1,3 +1,5 @@
+//! Updated 2023, trigPrescale: Short_t->Float_t
+
 #ifndef VertexCompositeTree_h
 #define VertexCompositeTree_h
 
@@ -55,7 +57,7 @@ class VertexCompositeTree {
         Float_t   ZDCMinus()                    { SetBranch("ZDCMinus");                    return ZDCMinus_;                   }
         Int_t     Ntrkoffline()                 { SetBranch("Ntrkoffline");                 return Ntrkoffline_;                }
         Int_t     NtrkHP()                      { SetBranch("NtrkHP");                      return NtrkHP_;                     }
-        Short_t*  trigPrescale()                { SetBranch("trigPrescale");                return trigPrescale_;               }
+        Float_t*  trigPrescale()                { SetBranch("trigPrescale");                return trigPrescale_;               }
         Bool_t*   trigHLT()                     { SetBranch("trigHLT");                     return trigHLT_;                    }
         Bool_t*   evtSel()                      { SetBranch("evtSel");                      return evtSel_;                     }
 
@@ -264,7 +266,7 @@ class VertexCompositeTree {
         Float_t           ZDCMinus_=-1.;
         Int_t             Ntrkoffline_=-1;
         Int_t             NtrkHP_=-1;
-        Short_t           trigPrescale_[NTRG]={0};
+        Float_t           trigPrescale_[NTRG]={0};
         Bool_t            trigHLT_[NTRG]={0};
         Bool_t            evtSel_[NSEL]={0};
 

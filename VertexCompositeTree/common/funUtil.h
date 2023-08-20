@@ -1,4 +1,4 @@
-#include "constants.h"
+#include "./compatibility/constants.h"
 
 TF1 *funPtMeanShift;
 TF1 *funRawPtRes;
@@ -12,7 +12,7 @@ Bool_t init()
 	//auto comDir = cwd.substr(0,cwd.find("jpsiAnaCode"))+"jpsiAnaCode/common";
 
 	//TFile *fRawPtRes = TFile::Open(Form("%s/rawPtRes.root", comDir.c_str()));
-	TFile *fRawPtRes = TFile::Open("/Users/zaochenrice/ResearchFiles/cmsWork/upcJpsiDimu/common/rawPtRes.root");
+	TFile *fRawPtRes = TFile::Open("./inFiles/rawPtRes.root");
 	funPtMeanShift   = (TF1 *)fRawPtRes->Get("funPtMeanShift");
 	funRawPtRes      = (TF1 *)fRawPtRes->Get("funRawPtRes");
 

@@ -65,14 +65,14 @@ Double_t shiftDeltaPhi(Double_t dPhi);
 void bookHistos();
 void writeHistos(TString fileName = "test");
 
-void anaMcEvt(TString fileName = "CohJpsi")
+void anaMcEvt(TString fileName = "GammaGamma")
 {
 	cout<<"running with: "<<fileName<<endl;
 
 	TH1::SetDefaultSumw2(kTRUE);
 
 	std::string inputFile;
-	if(     fileName.EqualTo("LowMassGammaGamma"))inputFile = "../rootfiles/VertexCompositeTree_STARLIGHT_LowMassGammaGammaToMuMu_GenFilter_DiMuMC_20200906.root";
+	if(     fileName.EqualTo("GammaGamma"))inputFile = "inFiles/2018/VertexCompositeTree_STARLIGHT_GGToMuMu_woPtCut_DiMuMC_20191122.root";
 	else if(fileName.EqualTo("CohJpsi"))          inputFile = "./inFiles/dimuana_mc_CohJpsi_sample_1000.root";
 	else if(fileName.EqualTo("CohJpsi_0n0n"))     inputFile = "../rootfiles/VertexCompositeTree_STARLIGHT_CohJpsiToMuMu_0n0n_GenFilter_DiMuMC_20210131.root";
 	else if(fileName.EqualTo("CohJpsi_0nXn"))     inputFile = "../rootfiles/VertexCompositeTree_STARLIGHT_CohJpsiToMuMu_0nXn_GenFilter_DiMuMC_20210131.root";
@@ -109,6 +109,7 @@ void anaMcEvt(TString fileName = "CohJpsi")
 
 	for (Long64_t jentry = 1; jentry < csTree.GetEntries(); jentry++) 
 	{
+		if (jentry > 100000) break;
 		if (jentry % (csTree.GetEntries() / 10) == 0)
 			cout << "begin " << jentry << "th entry...." << endl;
 
@@ -601,7 +602,7 @@ Bool_t goodMuPair(VertexCompositeTree& evtTree, const int icand)
 	Double_t mTrigPtTh2 = fTrigAcc ->Eval( evtTree.EtaD2()[icand] );
 
 	if(evtTree.pTD1()[icand] < mTrkPtTh1 || evtTree.pTD2()[icand] < mTrkPtTh2) return kFALSE;
-	cout<<bool(evtTree.trigMuon1()[trigIdx][icand])<<endl;
+	// cout<<bool(evtTree.trigMuon1()[trigIdx][icand])<<endl;
 
 	Bool_t isTrigAcc1 = kFALSE, isTrigAcc2 = kFALSE;
 	if(evtTree.trigMuon1()[trigIdx][icand] && evtTree.pTD1()[icand] >= mTrigPtTh1) isTrigAcc1 = kTRUE;
