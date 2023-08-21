@@ -66,12 +66,12 @@ void bookHistos()
 	}
 
 	const int nBins_Pt  = 50;
-	const double BinsLow_Pt  = 1;
+	const double BinsLow_Pt  = 0;
 	const double BinsHigh_Pt = 5;
 
 	const int nBins_Eta = 40;
-	const double BinsLow_Eta = -2.5;
-	const double BinsHigh_Eta = 2.5;
+	const double BinsLow_Eta = -2.6;
+	const double BinsHigh_Eta = 2.6;
 	
 	const int nBins_Phi = 30;
 	const double BinsLow_Phi = -PI;
@@ -310,8 +310,11 @@ void pipeline_draw_RecoEff_SingleMu(TH3D *h3Pass, TH3D *h3Total, TString project
 void pipeline_draw_L1_TrigEff(TH3D *h3Pass, TH3D *h3Total, TString project, TString name)
 {
 	//* Project the 3D histogram to 1D histogram and calculate the efficiency
-	auto hPass = (TH1D*)h3Pass->Project3D(project);
-	auto hTotal = (TH1D*)h3Total->Project3D(project);
+	// auto hPass = (TH1D*)h3Pass->Project3D(project);
+	// auto hTotal = (TH1D*)h3Total->Project3D(project);
+	auto hPass = (TH1D*)h3Pass->ProjectionX("", 1,2);
+	auto hTotal = (TH1D*)h3Total->ProjectionX("", 1,2);
+
 	
 	//* Calculate the efficiency
 	auto hEff = cal_eff(hPass, hTotal);
@@ -403,71 +406,51 @@ const std::vector<TLorentzVector> GetFourMom(Short_t chargeD1, Short_t chargeD2,
 	return {posFourMom, negFourMom, pairFourMom};
 }
 
+void update_progress(int ientry, int total_entries, int percentage_increment)
+{
+	if (ientry % (total_entries / percentage_increment) == 0)
+	{
+		std::cout << "Processing " << ientry << "th entry... (" << (int)((double)ientry / total_entries * 100) << "%)" << std::endl;
+	}
+}
+
 //== Main =========================================================================================
 void VCTree_TrigEff()
 {
 	TH1::SetDefaultSumw2(kTRUE);
-	// const TString inputFileDir = "inFiles/2023/VCTree_STARLIGHT_CohJpsiToMuMu_5p36TeV_Run3.root";
-	// const TString inputFileDir = "inFiles/2018/VertexCompositeTree_STARLIGHT_CohJpsiToMuMu_GenFilter_DiMuMC_20200906.root";
-	const TString inputFileDir = "inFiles/2018/VertexCompositeTree_STARLIGHT_GGToMuMu_woPtCut_DiMuMC_20191122.root";
-	TFile *inputFile = new TFile(inputFileDir, "READ");
+	// std::string inputFileDir = "inFiles/2023/VCTree_STARLIGHT_CohJpsiToMuMu_5p36TeV_Run3.root";
+	// std::string inputFileDir = "inFiles/2018/VertexCompositeTree_STARLIGHT_CohJpsiToMuMu_GenFilter_DiMuMC_20200906.root";
+	std::string inputFileDir = "inFiles/2018/VertexCompositeTree_STARLIGHT_GGToMuMu_woPtCut_DiMuMC_20191122.root";
 
-	const TString TreeDir = "dimucontana_mc/VertexCompositeNtuple";
+	const auto& csTreeDir = "dimucontana_mc";
 
-	// ===================================================================================
-	// = Set up the TTreeReader and TTreeReaderValue objects.
-	TTreeReader treeReader(TreeDir, inputFile);
-
-	TTreeReaderValue<Int_t>					Ntrkoffline(treeReader,			"Ntrkoffline");
-	TTreeReaderValue<Int_t>					NtrkHP(treeReader,				"NtrkHP");
-	TTreeReaderArray<Bool_t>				evtSel(treeReader,				"evtSel");
-	
-	TTreeReaderValue<UInt_t>				candSize_gen(treeReader,		"candSize_gen");
-	TTreeReaderArray<Short_t>				chargeD1_gen(treeReader,		"chargeD1_gen");
-	TTreeReaderArray<Short_t>				chargeD2_gen(treeReader,		"chargeD2_gen");
-	TTreeReaderArray<Float_t>				pTD1_gen(treeReader,			"pTD1_gen");
-	TTreeReaderArray<Float_t>				pTD2_gen(treeReader,			"pTD2_gen");
-	TTreeReaderArray<Float_t>				EtaD1_gen(treeReader,			"EtaD1_gen");
-	TTreeReaderArray<Float_t>				EtaD2_gen(treeReader,			"EtaD2_gen");
-	TTreeReaderArray<Float_t>				PhiD1_gen(treeReader,			"PhiD1_gen");
-	TTreeReaderArray<Float_t>				PhiD2_gen(treeReader,			"PhiD2_gen");
-	TTreeReaderArray<Short_t>				RecIdx_gen(treeReader,			"RecIdx_gen");
-	
-	TTreeReaderValue<UInt_t>				candSize(treeReader,		"candSize");
-	// TTreeReaderValue<Bool_t>				softCand(treeReader,		"softCand");
-	TTreeReaderArray<Short_t>				chargeD1(treeReader,		"chargeD1");
-	TTreeReaderArray<Short_t>				chargeD2(treeReader,		"chargeD2");
-	TTreeReaderArray<Float_t>				pTD1(treeReader,			"pTD1");
-	TTreeReaderArray<Float_t>				pTD2(treeReader,			"pTD2");
-	TTreeReaderArray<Float_t>				EtaD1(treeReader,			"EtaD1");
-	TTreeReaderArray<Float_t>				EtaD2(treeReader,			"EtaD2");
-	TTreeReaderArray<Float_t>				PhiD1(treeReader,			"PhiD1");
-	TTreeReaderArray<Float_t>				PhiD2(treeReader,			"PhiD2");
-
-	TTreeReaderValue<UInt_t>				candSize_mu(treeReader,				"candSize_mu");
-	TTreeReaderArray<Bool_t>				softMuon_mu(treeReader,				"softMuon_mu");
-	TTreeReaderArray<Float_t>				pT_mu(treeReader,					"pT_mu");
-	TTreeReaderArray<Float_t>				eta_mu(treeReader,					"eta_mu");
-	TTreeReaderArray<Float_t>				phi_mu(treeReader,					"phi_mu");
-
-	TTreeReaderValue<std::vector< std::vector<UChar_t> >>
-											trigMuon_mu(treeReader,				"trigMuon_mu");
-	TTreeReaderArray<Bool_t>				trigHLT(treeReader,					"trigHLT");
-	// =======================================================================================
-
+	// Extract the tree
+	VertexCompositeTree csTree;
+	if (!csTree.GetTree(inputFileDir, csTreeDir)) 
+	{
+		cout << "Invalid Correct-Sign tree!" << endl;
+		return;
+	}
 
 	bookHistos();
 
-	int jentry = 0;
 	int multiple_matched_tracks = 0;
 	int total_tracks = 0;
-	int max_entries = 1000000;
-	while (treeReader.Next())
+	int total_entries = csTree.GetEntries();
+	int max_entries = 100000;
+	cout << "max_entries = " << total_entries << endl;
+	for (Long64_t jentry = 1; jentry < total_entries; jentry++) 
 	{
 		if (jentry >= max_entries) break;
-		jentry++;
-		if (jentry % (treeReader.GetEntries() / 10) == 0)
-			cout << "begin " << jentry << "th entry...." << endl;
+
+		update_progress(jentry, max_entries, 10);
+
+		// Get the entry
+		if (csTree.GetEntry(jentry) < 0) 
+		{
+			cout << "Invalid correct-sign entry!" << endl;
+			return;
+		}
 
 		hnEvts->Fill(0.5);
 
@@ -475,7 +458,7 @@ void VCTree_TrigEff()
 		// Select Event - require this event has a valid vertex and is not beam-halo event
 		//[2] = Flag_primaryVertexFilter: events have valid vertex
 		//[3] = Flag_clusterCompatibilityFilter: the shapes of the clusters in the pixel detector are required to be compatible with the shapes expected from a heavy ion collision
-		Bool_t goodVtx				= (evtSel[2] && evtSel[3]);
+		Bool_t goodVtx				= (csTree.evtSel()[2] && csTree.evtSel()[3]);
 
 		//evtSel[4-15]
 		//[4]=0: HFPlusMaxTower < 3 GeV;  [4]=1: HFPlusMaxTower > 3 GeV
@@ -486,10 +469,10 @@ void VCTree_TrigEff()
 		//[12] is for Plus & [13] is for Minus; Threshold = 7 GeV
 		//[14] is for Plus & [15] is for Minus; Threshold = 8 GeV
 		//[16] is for Plus (Th = 7.6 GeV) & [17] is for Minus (Th = 7.3 GeV);
-		Bool_t goodHFVeto 			= (!evtSel[16] && !evtSel[17]);
-		Bool_t passNTrkHP 			= *NtrkHP == 2;	// contain only two high-purity tracks and nothing else
+		Bool_t goodHFVeto 			= (!csTree.evtSel()[16] && !csTree.evtSel()[17]);
+		Bool_t passNTrkHP 			= csTree.NtrkHP() == 2;	// contain only two high-purity tracks and nothing else
 		Bool_t passEvtSel 			= goodVtx && goodHFVeto && passNTrkHP;
-		Bool_t passNRecoCandidate 	= *candSize == 1;
+		Bool_t passNRecoCandidate 	= csTree.candSize() == 1;
 
 		if (goodVtx)				hnEvts->Fill(1.5);
 		if (goodVtx && goodHFVeto)	hnEvts->Fill(2.5);
@@ -497,13 +480,13 @@ void VCTree_TrigEff()
 		if (passNRecoCandidate)		hnEvts->Fill(4.5);
 
 		//* fill Ntrk distributions
-		hNtrkofflinevsNtrkHP->Fill(*Ntrkoffline, *NtrkHP);
+		hNtrkofflinevsNtrkHP->Fill(csTree.Ntrkoffline(), csTree.NtrkHP());
 
 		//= Fill Paired Muon Reco Eff Hist ===========================================================================
-		for (UInt_t icand_gen = 0; icand_gen < *candSize_gen; icand_gen++)
+		for (UInt_t icand_gen = 0; icand_gen < csTree.candSize_gen(); icand_gen++)
 		{
 			//* Get the four-momentum of the pair
-			const std::vector<TLorentzVector> fourMom_gen = GetFourMom(chargeD1_gen[icand_gen], chargeD2_gen[icand_gen], pTD1_gen[icand_gen], pTD2_gen[icand_gen], EtaD1_gen[icand_gen], EtaD2_gen[icand_gen], PhiD1_gen[icand_gen], PhiD2_gen[icand_gen]);
+			const std::vector<TLorentzVector> fourMom_gen = GetFourMom(csTree.chargeD1_gen()[icand_gen], csTree.chargeD2_gen()[icand_gen], csTree.pTD1_gen()[icand_gen], csTree.pTD2_gen()[icand_gen], csTree.EtaD1_gen()[icand_gen], csTree.EtaD2_gen()[icand_gen], csTree.PhiD1_gen()[icand_gen], csTree.PhiD2_gen()[icand_gen]);
 			TLorentzVector pairFourMom_gen = fourMom_gen[2];
 
 			Double_t pt_gen		= pairFourMom_gen.Pt();
@@ -517,20 +500,20 @@ void VCTree_TrigEff()
 			hPtvsRapvsPhi_gen	->Fill(pt_gen,	rap_gen,	phi_gen);
 
 			//* fill numerator of Paired Muon reconstruction eff
-			Short_t recoIdx = RecIdx_gen[icand_gen]; // recoIdx = -1 if not reconstructed
+			Short_t recoIdx = csTree.RecIdx_gen()[icand_gen]; // recoIdx = -1 if not reconstructed
 
-			if (*candSize > 0)
+			if (csTree.candSize() > 0)
 			{
 				hPtvsEtavsPhi_gen_reconstructed	->Fill(pt_gen,	eta_gen,	phi_gen);
 				hPtvsRapvsPhi_gen_reconstructed	->Fill(pt_gen,	rap_gen,	phi_gen);
 			}
 		}
 
-		//= Fill Single Muon Reconstruction and L1Trigger Eff Hist =======================================================
-		for (UInt_t icand_gen = 0; icand_gen < *candSize_gen; icand_gen++)
+		//= Fill Single Muon Reconstruction and L1Trigger Eff Hist ===================================================
+		for (UInt_t icand_gen = 0; icand_gen < csTree.candSize_gen(); icand_gen++)
 		{
 			//* Get the four-momentum of the pair
-			const std::vector<TLorentzVector> fourMom_gen = GetFourMom(chargeD1_gen[icand_gen], chargeD2_gen[icand_gen], pTD1_gen[icand_gen], pTD2_gen[icand_gen], EtaD1_gen[icand_gen], EtaD2_gen[icand_gen], PhiD1_gen[icand_gen], PhiD2_gen[icand_gen]);
+			const std::vector<TLorentzVector> fourMom_gen = GetFourMom(csTree.chargeD1_gen()[icand_gen], csTree.chargeD2_gen()[icand_gen], csTree.pTD1_gen()[icand_gen], csTree.pTD2_gen()[icand_gen], csTree.EtaD1_gen()[icand_gen], csTree.EtaD2_gen()[icand_gen], csTree.PhiD1_gen()[icand_gen], csTree.PhiD2_gen()[icand_gen]);
 			TLorentzVector pairFourMom_gen = fourMom_gen[2];
 
 			Double_t pt_gen_mu_pos		= fourMom_gen[0].Pt();
@@ -545,11 +528,6 @@ void VCTree_TrigEff()
 			Double_t mass_gen_mu_neg	= fourMom_gen[1].M();
 			Double_t rap_gen_mu_neg		= fourMom_gen[1].Rapidity();
 
-			Double_t BestDeltaR_mu_pos = 99999999.;
-			Double_t BestDeltaR_mu_neg = 99999999.;
-			Int_t    RecoIdx_mu_pos   = -1;
-			Int_t    RecoIdx_mu_neg   = -1;
-
 			//* fill denominator of single muon reconstruction eff
 			hPtvsEtavsPhi_gen_mu_pos	->Fill(pt_gen_mu_pos,	eta_gen_mu_pos,	phi_gen_mu_pos);
 			hPtvsEtavsPhi_gen_mu_neg	->Fill(pt_gen_mu_neg,	eta_gen_mu_neg,	phi_gen_mu_neg);
@@ -557,18 +535,18 @@ void VCTree_TrigEff()
 			total_tracks += 2;
 
 			//= Using muon from the single muon branch =================================================
-			for (UInt_t icand_mu = 0; icand_mu < *candSize_mu; icand_mu++)
+			Double_t BestDeltaR_mu_pos = 99999999.;
+			Double_t BestDeltaR_mu_neg = 99999999.;
+			Int_t    RecoIdx_mu_pos   = -1;
+			Int_t    RecoIdx_mu_neg   = -1;
+
+			for (UInt_t icand_mu = 0; icand_mu < csTree.candSize_mu(); icand_mu++)
 			{
 				//! Muon Level Selections !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-				if (!softMuon_mu[icand_mu]) continue;
+				if (!csTree.softMuon_mu()[icand_mu]) continue;
 				//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-				//* Get the three-momentum of the muons
-				Double_t pt_mu_ = pT_mu[icand_mu];
-				Double_t eta_mu_ = eta_mu[icand_mu];
-				Double_t phi_mu_ = phi_mu[icand_mu];
-
-				TVector3 Mom_mu; Mom_mu.SetPtEtaPhi(pt_mu_, eta_mu_, phi_mu_);
+				TVector3 Mom_mu; Mom_mu.SetPtEtaPhi(csTree.pT_mu()[icand_mu], csTree.eta_mu()[icand_mu], csTree.phi_mu()[icand_mu]);
 				TVector3 Mom_gen_mu_pos = fourMom_gen[0].Vect();
 				TVector3 Mom_gen_mu_neg = fourMom_gen[1].Vect();
 
@@ -583,41 +561,53 @@ void VCTree_TrigEff()
 					BestDeltaR_mu_neg = Mom_gen_mu_neg.DeltaR(Mom_mu);
 					RecoIdx_mu_neg = icand_mu;
 				}
-				//* warning if one reconstructed muon is matched to multiple generated muons
-				if(RecoIdx_mu_pos>=0 && RecoIdx_mu_neg>=0 && RecoIdx_mu_pos == RecoIdx_mu_neg)
-				{
-					multiple_matched_tracks++;
-					// cout<<"One reco-track is matched to multiple gen-tracks !"<<endl;
-				}
-
-				//* fill numerator of single muon reconstruction eff
-				if (RecoIdx_mu_pos >= 0)
-				{
-					hPtvsEtavsPhi_gen_mu_pos_reconstructed	->Fill(pt_gen_mu_pos,	eta_gen_mu_pos,	phi_gen_mu_pos);
-					hPtvsEtavsPhi_mu_pos		->Fill(pt_mu_,	eta_mu_,	phi_mu_);
-
-					//* fill denominator of L1 trigger eff
-					if (bool( trigMuon_mu->at(L1_TrigIdx).at(RecoIdx_mu_pos)) )	
-					{
-						hPtvsEtavsPhi_mu_pos_trigL1->Fill(pt_mu_, eta_mu_, phi_mu_);
-					}
-				}
-				if (RecoIdx_mu_neg >= 0)
-				{
-					hPtvsEtavsPhi_gen_mu_neg_reconstructed	->Fill(pt_gen_mu_neg,	eta_gen_mu_neg,	phi_gen_mu_neg);
-					hPtvsEtavsPhi_mu_neg		->Fill(pt_mu_,	eta_mu_,	phi_mu_);
-
-					//* fill denominator of L1 trigger eff
-					if (bool(trigMuon_mu->at(L1_TrigIdx).at(RecoIdx_mu_neg)))
-					{
-						hPtvsEtavsPhi_mu_neg_trigL1->Fill(pt_mu_, eta_mu_, phi_mu_);
-					}
-				}
 			}
 
+			//* warning if one reconstructed muon is matched to multiple generated muons
+			if(RecoIdx_mu_pos>=0 && RecoIdx_mu_neg>=0 && RecoIdx_mu_pos == RecoIdx_mu_neg)
+			{
+				multiple_matched_tracks++;
+				// cout<<"One reco-track is matched to multiple gen-tracks !"<<endl;
+			}
+
+			//* fill numerator of single muon reconstruction eff
+			if (RecoIdx_mu_pos >= 0)
+			{
+				//* get the matched muon
+				Double_t pt_mu_		= csTree.pT_mu()[RecoIdx_mu_pos];
+				Double_t eta_mu_	= csTree.eta_mu()[RecoIdx_mu_pos];
+				Double_t phi_mu_	= csTree.phi_mu()[RecoIdx_mu_pos];
+
+				hPtvsEtavsPhi_gen_mu_pos_reconstructed	->Fill(pt_gen_mu_pos,	eta_gen_mu_pos,	phi_gen_mu_pos);
+				hPtvsEtavsPhi_mu_pos		->Fill(pt_mu_,	eta_mu_,	phi_mu_);
+
+				//* fill denominator of L1 trigger eff
+				if (bool( csTree.trigMuon_mu()[L1_TrigIdx][RecoIdx_mu_pos]) )	
+				{
+					hPtvsEtavsPhi_mu_pos_trigL1->Fill(pt_mu_, eta_mu_, phi_mu_);
+				}
+			}
+			if (RecoIdx_mu_neg >= 0)
+			{
+				//* get the matched muon
+				Double_t pt_mu_		= csTree.pT_mu()[RecoIdx_mu_neg];
+				Double_t eta_mu_	= csTree.eta_mu()[RecoIdx_mu_neg];
+				Double_t phi_mu_	= csTree.phi_mu()[RecoIdx_mu_neg];
+
+				hPtvsEtavsPhi_gen_mu_neg_reconstructed	->Fill(pt_gen_mu_neg,	eta_gen_mu_neg,	phi_gen_mu_neg);
+				hPtvsEtavsPhi_mu_neg		->Fill(pt_mu_,	eta_mu_,	phi_mu_);
+
+				//* fill denominator of L1 trigger eff
+				if (bool(csTree.trigMuon_mu()[L1_TrigIdx][RecoIdx_mu_neg]))
+				{
+					hPtvsEtavsPhi_mu_neg_trigL1->Fill(pt_mu_, eta_mu_, phi_mu_);
+				}
+			}
+			//=============================================================================================
+
 			// //= Using muon from the paired muon branch =================================================
-			// Int_t recoIdx = RecIdx_gen[icand_gen];
-			// if ( recoIdx<0 || *candSize <= 0 ) continue;
+			// Int_t recoIdx = csTree.RecIdx_gen()[icand_gen];
+			// if ( recoIdx<0 || csTree.candSize() <= 0 ) continue;
 			// //! Muon Level Selections !!!!
 			// if( !softCand[recoIdx] ) continue;
 			// //!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -628,16 +618,17 @@ void VCTree_TrigEff()
 
 		}
 
+
 		//! Event Level Selections !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		if (!passEvtSel) 			continue;
 		//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
 		//= Fill HLT Trig Eff Hist =======================================================================
-		for (UInt_t icand = 0; icand < *candSize; icand++)
+		for (UInt_t icand = 0; icand < csTree.candSize(); icand++)
 		{
 			//* Get the four-momentum of the pair
-			const std::vector<TLorentzVector> fourMom = GetFourMom(chargeD1[icand], chargeD2[icand], pTD1[icand], pTD2[icand], EtaD1[icand], EtaD2[icand], PhiD1[icand], PhiD2[icand]);
+			const std::vector<TLorentzVector> fourMom = GetFourMom(csTree.chargeD1()[icand], csTree.chargeD2()[icand], csTree.pTD1()[icand], csTree.pTD2()[icand], csTree.EtaD1()[icand], csTree.EtaD2()[icand], csTree.PhiD1()[icand], csTree.PhiD2()[icand]);
 			TLorentzVector pairFourMom = fourMom[2];
 
 			Double_t pt		= pairFourMom.Pt();
@@ -653,7 +644,7 @@ void VCTree_TrigEff()
 			//* fill numerator of HLT trig eff for each trigger
 			for (int iTrig = 0; iTrig < nTrig; ++iTrig)
 			{
-				if (trigHLT[HLT_TrigIdx[iTrig]])
+				if (csTree.trigHLT()[HLT_TrigIdx[iTrig]])
 				{
 					vPtvsEtavsPhi_trigHLT[iTrig]->Fill(pt, eta, phi);
 					vPtvsRapvsPhi_trigHLT[iTrig]->Fill(pt, rap, phi);
