@@ -395,8 +395,8 @@ void anaMcEvt(TString fileName = "GammaGamma")
 		hNRcMuvsNGenMu->Fill( csTree.candSize_gen()*2, nSoftMuon);
 	}
 
-	system("mkdir -p mcHistos");
-	writeHistos(Form("mcHistos/dimuonHistos.%s", fileName.Data()));
+	// system("mkdir -p mcHistos");
+	// writeHistos(Form("mcHistos/dimuonHistos.%s", fileName.Data()));
 }
 
 void bookHistos()

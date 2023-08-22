@@ -2,6 +2,36 @@
 
 This repository contains code for opening ROOT trees.
 
+# VertexCompositeTree (VCTree)
+## 1. Efficiency
+
+### Paired Dimuon Reconstruction Efficiency
+In each event
+1. Loop over gen index and and find the corresponding reco index for the dimuon pair
+1. $\epsilon_{Reconstruction} = \frac{N_{REC}}{N_{GEN}}$
+
+### Single Muon Reconstruction
+
+### Paired Single Muon Reconstruction Efficiency
+
+### L1Trigger Efficiency
+
+### HLT Trigger Efficiency
+
+## 2. Tree Structure
+
+1. VCTree variable type
+    * Gen level:    paired daughter particles in each event, accessed by branches such as PhiD1_gen etc.
+    * Reco level:   paired daughter particles reconstructed in each event, accessed by branches such as PhiD1 etc.
+    * Reco level:   individual daughter particles reconstructed in each event, accessed by branches such as phi_mu etc.
+    * Reco level:   combined parent particles reconstructed in each event, accessed by branches such as phi etc.
+1. Array type
+    * trigMuon_mu:  if a L1 trig is fired by the individual muon, accessed by trigMuon_mu()[trigIdx][RecoIdx]
+    * trigMuon1:    if a L1 trig is fired by a daughter muon, accessed by trigMuon1()()[trigIdx][RecoIdx]
+    * trigHLT:      if a HLT trig is fired in an event, accessed by trigHLT()[HLT_TrigIdx]
+    * RecIdx_gen:   Given the current paired gen candidate index, what is its corresponding reconstructed paired candidate index, accessed by RecIdx_gen()[icand_gen]
+
+
 # STARlight Simulation
 ## 1. Install STARlight
 One can either execute "./compileSTARlight.sh 313" to automatically compile the STARlight v3.13 
