@@ -7,7 +7,7 @@ config.section_("General")
 config.General.workArea = 'crab_projects'
 config.General.transferOutputs = True
 config.General.transferLogs = False
-request_name = "STARlight_CohJpsiToMuMu_GenSim"
+request_name = "STARlight_CohJpsiToMuMu_GenSim_132X"
 request_name += "_%s" % datetime.now().strftime("%y%m%d_%H%M%S")
 config.General.requestName = request_name
 
@@ -20,15 +20,15 @@ config.JobType.allowUndistributedCMSSW = True
 
 #############################################################################################
 config.section_('Data')
-config.JobType.inputFiles = ['starlight_slight_CohJpsiToMuMu_Run3_el8_amd64_gcc11_CMSSW_13_0_12_tarball.tgz']
+config.JobType.inputFiles = ['starlight_slight_CohJpsiToMuMu_Run3_el8_amd64_gcc11_CMSSW_13_2_1_tarball.tgz']
 config.Data.splitting	= 'EventBased'
-config.Data.unitsPerJob = 1000
-NJOBS = 800
+config.Data.unitsPerJob = 2000
+NJOBS = 500
 config.Data.totalUnits = config.Data.unitsPerJob * NJOBS
 config.Data.publication = False
 # config.JobType.maxMemoryMB = 2000
 # config.JobType.maxJobRuntimeMin = 1000
-config.Data.outputPrimaryDataset = "STARlight_CohJpsiToMuMu_PbPb5p36TeV_2023Run3"
+# config.Data.outputPrimaryDataset = "STARlight"
 config.Data.outputDatasetTag = config.General.requestName
 config.Data.outLFNDirBase = '/store/group/phys_heavyions/jiazhao/STARlight/2023Run3/GenSim/%s' %  config.General.requestName
 
