@@ -5,9 +5,10 @@
 void VCTree_TrigEff()
 {
 	TH1::SetDefaultSumw2(kTRUE);
-	// std::string inputFileDir = "inFiles/2023/VCTree_STARLIGHT_CohJpsiToMuMu_5p36TeV_Run3.root";
+	// std::string inputFileDir = "inFiles/2023/VCTree_STARLIGHT_CohJpsiToMuMu_5p36TeV_130X_1M.root";
+	std::string inputFileDir = "inFiles/2023/VCTree_STARLIGHT_CohJpsiToMuMu_5p36TeV_132X_1M.root";
 	// std::string inputFileDir = "inFiles/2018/VertexCompositeTree_STARLIGHT_CohJpsiToMuMu_GenFilter_DiMuMC_20200906.root";
-	std::string inputFileDir = "inFiles/2018/VertexCompositeTree_STARLIGHT_GGToMuMu_woPtCut_DiMuMC_20191122.root";
+	// std::string inputFileDir = "inFiles/2018/VertexCompositeTree_STARLIGHT_GGToMuMu_woPtCut_DiMuMC_20191122.root";
 
 	const auto& csTreeDir = "dimucontana_mc";
 
@@ -28,9 +29,9 @@ void VCTree_TrigEff()
 	int total_entries = csTree.GetEntries();
 	int max_entries = 100000;
 	cout << "max_entries = " << total_entries << endl;
-	for (Long64_t jentry = 1; jentry < total_entries; jentry++) 
+	for (Long64_t jentry = 0; jentry < total_entries; jentry++) 
 	{
-		if (jentry >= max_entries) break;
+		if (jentry > max_entries) break;
 
 		update_progress(jentry, max_entries, 10);
 
@@ -61,7 +62,7 @@ void VCTree_TrigEff()
 		Bool_t goodHFVeto 			= (!csTree.evtSel()[16] && !csTree.evtSel()[17]);
 		Bool_t passNTrkHP 			= csTree.NtrkHP() == 2;	// contain only two high-purity tracks and nothing else
 		Bool_t passEvtSel 			= goodVtx && goodHFVeto && passNTrkHP;
-		Bool_t passNRecoCandidate 	= csTree.candSize() == 1;
+		Bool_t passNRecoCandidate 	= csTree.candSize() > 0;
 
 		if (goodVtx)				hnEvts->Fill(1.5);
 		if (goodVtx && goodHFVeto)	hnEvts->Fill(2.5);
@@ -70,6 +71,7 @@ void VCTree_TrigEff()
 
 		//* fill Ntrk distributions
 		hNtrkofflinevsNtrkHP->Fill(csTree.Ntrkoffline(), csTree.NtrkHP());
+		hNpixelvsNpixelTracks->Fill(csTree.Npixel(), csTree.NpixelTracks());
 
 		//= Fill Dimuon Reco Eff Hist ===========================================================================
 		for (UInt_t icand_gen = 0; icand_gen < csTree.candSize_gen(); icand_gen++)
@@ -311,6 +313,7 @@ void VCTree_TrigEff()
 
 	draw_EvtSel();
 	draw_Ntrk_distribution();
+	draw_Npixel_distribution();
 
 	//= Calculate HLT Trig Eff ========================================================================
 	pipeline_draw_HLT_TrigEff(vPtvsRapvsPhi_trigHLT, hPtvsRapvsPhi, "x", "");
@@ -318,15 +321,15 @@ void VCTree_TrigEff()
 	pipeline_draw_HLT_TrigEff(vPtvsRapvsPhi_trigHLT, hPtvsRapvsPhi, "z", "");
 
 	//= Draw Reco Eff in Pt for Dimuon =================================================================
-	pipeline_draw_RecoEff(hPtvsRapvsPhi_gen_reconstructed->ProjectionY(), hPtvsRapvsPhi_gen->ProjectionY(), "");
+	// pipeline_draw_RecoEff(hPtvsRapvsPhi_gen_reconstructed->ProjectionY(), hPtvsRapvsPhi_gen->ProjectionY(), "");
 
 	//= Draw Reco Eff in Pt for Single Muon ============================================================
-	pipeline_draw_RecoEff_SingleMu(hPtvsEtavsPhi_gen_mu_pos_reconstructed, hPtvsEtavsPhi_gen_mu_pos, "y", "./outFigures/Eff_RecoSingleMu.pdf");
+	// pipeline_draw_RecoEff_SingleMu(hPtvsEtavsPhi_gen_mu_pos_reconstructed, hPtvsEtavsPhi_gen_mu_pos, "y", "./outFigures/Eff_RecoSingleMu.pdf");
 
 	//= Draw L1 Trig Eff in Pt =========================================================================
-	pipeline_draw_L1_TrigEff(hPtvsEtavsPhi_mu_pos_trigL1, hPtvsEtavsPhi_mu_pos, "x");
-	pipeline_draw_L1_TrigEff(hPtvsEtavsPhi_mu_pos_pair_trigL1, hPtvsEtavsPhi_mu_pos_pair, "x", "./outFigures/Eff_L1_Trig_pair.pdf");
+	// pipeline_draw_L1_TrigEff(hPtvsEtavsPhi_mu_pos_trigL1, hPtvsEtavsPhi_mu_pos, "x");
+	// pipeline_draw_L1_TrigEff(hPtvsEtavsPhi_mu_pos_pair_trigL1, hPtvsEtavsPhi_mu_pos_pair, "x", "./outFigures/Eff_L1_Trig_pair.pdf");
 
-	pipeline_draw_L1_TrigEff_inEtaBins(hPtvsEtavsPhi_mu_pos_trigL1, hPtvsEtavsPhi_mu_pos, "x", "./outFigures/Eff_L1_Trig_BD.pdf");
-	pipeline_draw_L1_TrigEff_inEtaBins(hPtvsEtavsPhi_mu_pos_pair_trigL1, hPtvsEtavsPhi_mu_pos_pair, "x", "./outFigures/Eff_L1_Trig_BD_pair.pdf");
+	// pipeline_draw_L1_TrigEff_inEtaBins(hPtvsEtavsPhi_mu_pos_trigL1, hPtvsEtavsPhi_mu_pos, "x", "./outFigures/Eff_L1_Trig_BD.pdf");
+	// pipeline_draw_L1_TrigEff_inEtaBins(hPtvsEtavsPhi_mu_pos_pair_trigL1, hPtvsEtavsPhi_mu_pos_pair, "x", "./outFigures/Eff_L1_Trig_BD_pair.pdf");
 }

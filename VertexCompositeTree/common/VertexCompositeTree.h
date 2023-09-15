@@ -51,6 +51,7 @@ class VertexCompositeTree {
         Float_t   bestvtxZ()                    { SetBranch("bestvtxZ");                    return bestvtxZ_;                   }
         Short_t   centrality()                  { SetBranch("centrality");                  return centrality_;                 }
         Int_t     Npixel()                      { SetBranch("Npixel");                      return Npixel_;                     }
+        Int_t     NpixelTracks()                { SetBranch("NpixelTracks");                return NpixelTracks_;               }
         Float_t   HFsumETPlus()                 { SetBranch("HFsumETPlus");                 return HFsumETPlus_;                }
         Float_t   HFsumETMinus()                { SetBranch("HFsumETMinus");                return HFsumETMinus_;               }
         Float_t   ZDCPlus()                     { SetBranch("ZDCPlus");                     return ZDCPlus_;                    }
@@ -260,6 +261,7 @@ class VertexCompositeTree {
         Float_t           bestvtxZ_=-99.;
         Short_t           centrality_=-1;
         Int_t             Npixel_=-1;
+        Int_t             NpixelTracks_=-1;
         Float_t           HFsumETPlus_=-1.;
         Float_t           HFsumETMinus_=-1.;
         Float_t           ZDCPlus_=-1.;
@@ -544,6 +546,7 @@ void VertexCompositeTree::InitTree(void)
         if (fChain->GetBranch("bestvtxZ"))                    fChain->SetBranchAddress("bestvtxZ",                  &bestvtxZ_,                   &(b["bestvtxZ"])                  );
         if (fChain->GetBranch("centrality"))                  fChain->SetBranchAddress("centrality",                &centrality_,                 &(b["centrality"])                );
         if (fChain->GetBranch("Npixel"))                      fChain->SetBranchAddress("Npixel",                    &Npixel_,                     &(b["Npixel"])                    );
+        if (fChain->GetBranch("NpixelTracks"))                fChain->SetBranchAddress("NpixelTracks",              &NpixelTracks_,               &(b["NpixelTracks"])                    );
         if (fChain->GetBranch("HFsumETPlus"))                 fChain->SetBranchAddress("HFsumETPlus",               &HFsumETPlus_,                &(b["HFsumETPlus"])               );
         if (fChain->GetBranch("HFsumETMinus"))                fChain->SetBranchAddress("HFsumETMinus",              &HFsumETMinus_,               &(b["HFsumETMinus"])              );
         if (fChain->GetBranch("ZDCPlus"))                     fChain->SetBranchAddress("ZDCPlus",                   &ZDCPlus_,                    &(b["ZDCPlus"])                   );
@@ -702,6 +705,7 @@ void VertexCompositeTree::Clear(void)
     if (GetBranchStatus("bestvtxZ")==1)     bestvtxZ_     = -99.;
     if (GetBranchStatus("centrality")==1)   centrality_   = -1;
     if (GetBranchStatus("Npixel")==1)       Npixel_       = -1;
+    if (GetBranchStatus("NpixelTracks")==1) NpixelTracks_ = -1;
     if (GetBranchStatus("HFsumETPlus")==1)  HFsumETPlus_  = -1.;
     if (GetBranchStatus("HFsumETMinus")==1) HFsumETMinus_ = -1.;
     if (GetBranchStatus("ZDCPlus")==1)      ZDCPlus_      = -1.;

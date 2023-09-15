@@ -1,4 +1,4 @@
-# This file is a template for Jpsi production in PbPb collisions at the LHC
+# This file is a template for Phi production in PbPb collisions at the LHC
 
 baseFileName = slight			#suite of output files will be saved with this base name
 BEAM_1_Z = 82					#Z of projectile
@@ -20,7 +20,7 @@ ETA_MIN = -10					#Minimum pseudorapidity
 ETA_MAX = 10					#Maximum pseudorapidity
 PROD_MODE = 2					#gg or gP switch (1 = 2-photon, 2 = coherent vector meson (narrow), 3 = coherent vector meson (wide), 4 = incoherent vector meson)
 N_EVENTS = 1000000				#Number of events
-PROD_PID = 443013				#Channel of interest
+PROD_PID = 333					#Channel of interest
 RND_SEED = 6886668				#Random number seed
 BREAKUP_MODE = 5				#Controls the nuclear breakup; a 5 here makes no requirement on the breakup of the ions
 INTERFERENCE = 1				#Interference (0 = off, 1 = on)

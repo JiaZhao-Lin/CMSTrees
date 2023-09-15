@@ -5,9 +5,14 @@
 TF1 *funTunedPtRes;
 TF1 *funRawPtRes;
 TF1 *funPtMeanShift;
-const std::vector<int> HLT_TrigIdx = {0, 8, 10, 13};
+const std::vector<int> HLT_TrigIdx = {0, 1, 8, 9, 10, 11, 13, 14};
 const int nTrig = HLT_TrigIdx.size();
 const int L1_TrigIdx = 0;
+
+// For 2018 tree
+// const std::vector<int> HLT_TrigIdx = {7};
+// const int nTrig = HLT_TrigIdx.size();
+// const int L1_TrigIdx = 7;
 
 
 //# Histograms ###########################################################################
@@ -15,6 +20,7 @@ TH1D *hnEvts;
 
 //* for tracks distributions
 TH2D *hNtrkofflinevsNtrkHP;
+TH2D *hNpixelvsNpixelTracks;
 
 //* for paired dimuon Reconstruction Efficiency
 TH3D *hPtvsEtavsPhi_gen;
@@ -62,27 +68,23 @@ void bookHistos()
 {
 	// event level
 	hnEvts = new TH1D("hnEvts", "hnEvts;", 5, 0, 5);
-	hnEvts->GetXaxis()->SetBinLabel(1, "trigEvt");
+	hnEvts->GetXaxis()->SetBinLabel(1, "Evt");
 	hnEvts->GetXaxis()->SetBinLabel(2, "validVtx & !Beam-halo");
 	hnEvts->GetXaxis()->SetBinLabel(3, "HFMaxE <= 7.6(7.3) GeV");
 	hnEvts->GetXaxis()->SetBinLabel(4, "N_{trk}^{HP} == 2");
-	hnEvts->GetXaxis()->SetBinLabel(5, "Dimuon Reconstructed");
+	hnEvts->GetXaxis()->SetBinLabel(5, "\\mu paired");
 	hnEvts->GetXaxis()->LabelsOption("d");
-	hnEvts->GetXaxis()->SetLabelSize(0.04);
+	hnEvts->GetXaxis()->SetLabelSize(0.03);
 
 	// track level
 	hNtrkofflinevsNtrkHP = new TH2D("hNtrkofflinevsNtrkHP", "hNtrkofflinevsNtrkHP; N_{trk}^{offline}; N_{trk}^{HP}", 5, 0, 5, 5, 0, 5);
-	for (int i = 0; i < 5; ++i)
-	{
-		hNtrkofflinevsNtrkHP->GetXaxis()->SetBinLabel(i + 1, Form("%d", i));
-		hNtrkofflinevsNtrkHP->GetYaxis()->SetBinLabel(i + 1, Form("%d", i));
-	}
+	hNpixelvsNpixelTracks = new TH2D("hNpixelvsNpixelTracks", "hNpixelvsNpixelTracks; N_{pixel}; N_{pixel}^{trk}", 30, 0, 30, 5, 0, 5);
 
-	const int nBins_Pt  = 50;
+	const int nBins_Pt  = 20;
 	const double BinsLow_Pt  = 0;
-	const double BinsHigh_Pt = 5;
+	const double BinsHigh_Pt = 1;
 
-	const int nBins_Eta = 10;
+	const int nBins_Eta = 20;
 	const double BinsLow_Eta = -2.6;
 	const double BinsHigh_Eta = 2.6;
 	
@@ -249,13 +251,13 @@ std::pair<Double_t, Double_t> smear_pt(Double_t posPt, Double_t posPt_gen, Doubl
 
 
 //= Drawings =============================================================================
-void draw_latex(double latex_x, double latex_y, TString latex_text)
+void draw_latex(double latex_x, double latex_y, TString latex_text, double latex_size = 0.04)
 {
 	TLatex *latex = new TLatex();
 	latex->SetNDC();
 	latex->SetTextFont(42);
-	latex->SetTextSize(0.04);
-	latex->SetTextAlign(31);
+	latex->SetTextSize(latex_size);
+	latex->SetTextAlign(11);
 	latex->DrawLatex(latex_x, latex_y, Form("%s", latex_text.Data()));
 }
 
@@ -265,8 +267,8 @@ void draw_header_Run3()
 	latex->SetNDC();
 	latex->SetTextFont(42);
 	latex->SetTextSize(0.04);
-	latex->DrawLatex(0.10, 0.92, "#bf{CMS} #it{Simulation}");
-	latex->DrawLatex(0.63, 0.92, "PbPb Run3 (5.36 TeV)");
+	latex->DrawLatex(0.18, 0.93, "#bf{CMS} #it{Simulation}");
+	latex->DrawLatex(0.68, 0.93, "PbPb Run3 (5.36 TeV)");
 }
 
 std::pair<TCanvas*, TLine*> get_eff_common(TH1D *hEff)
@@ -297,7 +299,7 @@ void draw_EvtSel()
 	gStyle->SetOptTitle(0);
 
 	hnEvts->Draw();
-	draw_latex(0.89, 0.20, Form("Total Evt: %.0f", hnEvts->GetBinContent(5)));
+	draw_latex(0.79, 0.20, Form("Total Evt: %.0f", hnEvts->GetBinContent(5)), 0.03);
 	c->SaveAs(Form("./outFigures/VCTree_EvtSel.pdf"));
 
 	delete c;
@@ -305,6 +307,11 @@ void draw_EvtSel()
 
 std::vector<TH1D*> pipeline_draw_HLT_TrigEff(std::vector<TH3D*> vh3Num, TH3D * h3Den, TString project, TString name)
 {
+
+	const std::vector<int> HLT_TrigMarkerIdx 		= {24,	24,		24,		24, 25, 25, 25, 25};
+	const std::vector<double> HLT_TrigMarkerSize 	= {1,	1.3,	1.5,	1.8,1,	1.3,	1.5,	1.8};
+	const std::vector<int> HLT_TrigColor 			= {1,	2,		3,		4,	1, 	2,		3,		4};
+
 	//* Project the 3D histogram to 1D histogram and calculate the efficiency
 	std::vector<TH1D*> vh1Eff;
 	auto h1Den = (TH1D*)h3Den->Project3D(project);
@@ -330,11 +337,14 @@ std::vector<TH1D*> pipeline_draw_HLT_TrigEff(std::vector<TH3D*> vh3Num, TH3D * h
 	for (int iTrig = 0; iTrig < nTrig; ++iTrig)
 	{
 		vh1Eff[iTrig]->GetYaxis()->SetRangeUser(0, 1.1);
-		vh1Eff[iTrig]->SetLineColor(iTrig + 1);
-		vh1Eff[iTrig]->Draw("same");
+		vh1Eff[iTrig]->SetMarkerStyle(HLT_TrigMarkerIdx[iTrig]);
+		vh1Eff[iTrig]->SetMarkerSize(HLT_TrigMarkerSize[iTrig]);
+		vh1Eff[iTrig]->SetLineColor(HLT_TrigColor[iTrig]);
+		vh1Eff[iTrig]->SetMarkerColor(HLT_TrigColor[iTrig]);
+		vh1Eff[iTrig]->Draw("same e");
 
 		//* Draw the legend
-		legend->AddEntry(vh1Eff[iTrig], Form("%s", HLT_TRIG_LIST[HLT_TrigIdx[iTrig]].Data()), "l");
+		legend->AddEntry(vh1Eff[iTrig], Form("%s", HLT_TRIG_LIST[HLT_TrigIdx[iTrig]].Data()), "p");
 	}
 
 	legend->Draw("same");
@@ -499,6 +509,12 @@ void draw_Ntrk_distribution()
 	gStyle->SetOptStat(0);
 	gStyle->SetOptTitle(0);
 
+	for (int i = 0; i < 5; ++i)
+	{
+		hNtrkofflinevsNtrkHP->GetXaxis()->SetBinLabel(i + 1, Form("%d", i));
+		hNtrkofflinevsNtrkHP->GetYaxis()->SetBinLabel(i + 1, Form("%d", i));
+	}
+
 	auto hNtrkoffline = (TH1D*)hNtrkofflinevsNtrkHP->ProjectionX();
 	auto hNtrkHP = (TH1D*)hNtrkofflinevsNtrkHP->ProjectionY();
 
@@ -533,14 +549,46 @@ void draw_Ntrk_distribution()
 	auto nTrkHP_frac_2 = hNtrkHP->GetBinContent(3) / nTrkHP_entries;
 	auto nTrkHP_frac_3 = hNtrkHP->GetBinContent(4) / nTrkHP_entries;
 
-	draw_latex(0.80, 0.40, Form("Frac: N_{trk}^{offline} = 0: %.2f,  N_{trk}^{HP} = 0: %.2f", nTrkoffline_frac_0, nTrkHP_frac_0));
-	draw_latex(0.80, 0.34, Form("Frac: N_{trk}^{offline} = 1: %.2f,  N_{trk}^{HP} = 1: %.2f", nTrkoffline_frac_1, nTrkHP_frac_1));
-	draw_latex(0.80, 0.28, Form("Frac: N_{trk}^{offline} = 2: %.2f,  N_{trk}^{HP} = 2: %.2f", nTrkoffline_frac_2, nTrkHP_frac_2));
-	draw_latex(0.80, 0.22, Form("Frac: N_{trk}^{offline} = 3: %.2f,  N_{trk}^{HP} = 3: %.2f", nTrkoffline_frac_3, nTrkHP_frac_3));
+	draw_latex(0.60, 0.40, Form("Frac: N_{trk}^{offline} = 0: %.2f,  N_{trk}^{HP} = 0: %.2f", nTrkoffline_frac_0, nTrkHP_frac_0), 0.03);
+	draw_latex(0.60, 0.34, Form("Frac: N_{trk}^{offline} = 1: %.2f,  N_{trk}^{HP} = 1: %.2f", nTrkoffline_frac_1, nTrkHP_frac_1), 0.03);
+	draw_latex(0.60, 0.28, Form("Frac: N_{trk}^{offline} = 2: %.2f,  N_{trk}^{HP} = 2: %.2f", nTrkoffline_frac_2, nTrkHP_frac_2), 0.03);
+	draw_latex(0.60, 0.22, Form("Frac: N_{trk}^{offline} = 3: %.2f,  N_{trk}^{HP} = 3: %.2f", nTrkoffline_frac_3, nTrkHP_frac_3), 0.03);
 	
 	c->SaveAs("./outFigures/Ntrkoffline.pdf");
 
 	delete c;
+}
+
+void draw_Npixel_distribution()
+{
+	auto c = new TCanvas("c", "", 800, 600);
+	//stat box and disable title
+	gStyle->SetOptStat(0);
+	gStyle->SetOptTitle(0);
+
+	// for (int i = 0; i < hNpixelvsNpixelTracks->GetNbinsX(); ++i)
+	// {
+	// 	hNpixelvsNpixelTracks->GetXaxis()->SetBinLabel(i + 1, Form("%d", i));
+	// }
+	// for (int i = 0; i < hNpixelvsNpixelTracks->GetNbinsY(); ++i)
+	// {
+	// 	hNpixelvsNpixelTracks->GetYaxis()->SetBinLabel(i + 1, Form("%d", i));
+	// }
+
+	auto hNpixel = (TH1D*)hNpixelvsNpixelTracks->ProjectionX();
+	auto hNpixelTracks = (TH1D*)hNpixelvsNpixelTracks->ProjectionY();
+
+	hNpixel->Draw();
+	c->SaveAs("./outFigures/Npixel.pdf");
+
+	//draw the bincontent on the top of the bar
+	hNpixelTracks->Draw();
+	draw_latex(0.70, 0.70, Form("N_{pixel}^{tracks} = 0: %.0f", hNpixelTracks->GetBinContent(1)));
+	draw_latex(0.70, 0.60, Form("N_{pixel}^{tracks} = 1: %.0f", hNpixelTracks->GetBinContent(2)));
+	draw_latex(0.70, 0.50, Form("N_{pixel}^{tracks} = 2: %.0f", hNpixelTracks->GetBinContent(3)));
+	draw_latex(0.70, 0.40, Form("N_{pixel}^{tracks} = 3: %.0f", hNpixelTracks->GetBinContent(4)));
+	draw_latex(0.70, 0.30, Form("N_{pixel}^{tracks} = 4: %.0f", hNpixelTracks->GetBinContent(5)));
+	c->SaveAs("./outFigures/NpixelTracks.pdf");
 }
 
 

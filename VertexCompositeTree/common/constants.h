@@ -28,21 +28,26 @@ const double PDG_MUON_PLUS		= 13;
 const TString HLT_TRIG_LIST[]	= 
 {
 	"HLT_HIUPC_SingleMuOpen_NotMBHF2AND_v", // UPC muons
-    "HLT_HIUPC_SingleMuOpen_NotMBHF2AND_MaxPixelTrack_v",
-    "HLT_HIUPC_SingleMuOpen_NotMBHF2OR_v",		//2
-    "HLT_HIUPC_SingleMuOpen_NotMBHF2OR_MaxPixelTrack_v",
-    "HLT_HIUPC_SingleMuOpen_OR_SingleMuCosmic_EMTF_NotMBHF2AND_v",	//4
+    "HLT_HIUPC_SingleMuOpen_NotMBHF2AND_MaxPixelTrack_v",   //2
+    "HLT_HIUPC_SingleMuOpen_NotMBHF2OR_v",
+    "HLT_HIUPC_SingleMuOpen_NotMBHF2OR_MaxPixelTrack_v",    //4
+    "HLT_HIUPC_SingleMuOpen_BptxAND_MaxPixelTrack_v",
+    "HLT_HIUPC_SingleMuOpen_OR_SingleMuCosmic_EMTF_NotMBHF2AND_v",  //6
     "HLT_HIUPC_SingleMuOpen_OR_SingleMuCosmic_EMTF_NotMBHF2AND_MaxPixelTrack_v",
-    "HLT_HIUPC_SingleMuOpen_OR_SingleMuCosmic_EMTF_NotMBHF2OR_v",	//6
+    "HLT_HIUPC_SingleMuOpen_OR_SingleMuCosmic_EMTF_NotMBHF2OR_v",   //8
     "HLT_HIUPC_SingleMuOpen_OR_SingleMuCosmic_EMTF_NotMBHF2OR_MaxPixelTrack_v",
-    "HLT_HIUPC_SingleMuCosmic_NotMBHF2AND_v",	//8
-    "HLT_HIUPC_SingleMuCosmic_NotMBHF2AND_MaxPixelTrack_v",
-    "HLT_HIUPC_DoubleMuOpen_NotMBHF2AND_v",	//10
-    "HLT_HIUPC_DoubleMuOpen_NotMBHF2AND_MaxPixelTrack_v",
-    "HLT_HIUPC_DoubleMuOpen_BptxAND_MaxPixelTrack_v",	//12
-    "HLT_HIUPC_DoubleMuCosmic_NotMBHF2AND_v",
-    "HLT_HIUPC_DoubleMuCosmic_NotMBHF2AND_MaxPixelTrack_v",	//14
-    "HLT_HIUPC_DoubleMuCosmic_BptxAND_MaxPixelTrack_v",
+    "HLT_HIUPC_SingleMuOpen_OR_SingleMuCosmic_EMTF_BptxAND_MaxPixelTrack_v",    //10
+    "HLT_HIUPC_SingleMuCosmic_NotMBHF2AND_v",
+    "HLT_HIUPC_SingleMuCosmic_NotMBHF2AND_MaxPixelTrack_v",   //12
+    "HLT_HIUPC_SingleMuCosmic_NotMBHF2OR_v",
+    "HLT_HIUPC_SingleMuCosmic_NotMBHF2OR_MaxPixelTrack_v",  //14
+    "HLT_HIUPC_SingleMuCosmic_BptxAND_MaxPixelTrack_v",
+    "HLT_HIUPC_DoubleMuOpen_NotMBHF2AND_v",
+    "HLT_HIUPC_DoubleMuOpen_NotMBHF2AND_MaxPixelTrack_v",   //18
+    "HLT_HIUPC_DoubleMuOpen_BptxAND_MaxPixelTrack_v",
+    "HLT_HIUPC_DoubleMuCosmic_NotMBHF2AND_v",   //20
+    "HLT_HIUPC_DoubleMuCosmic_NotMBHF2AND_MaxPixelTrack_v",
+    "HLT_HIUPC_DoubleMuCosmic_BptxAND_MaxPixelTrack_v",   //22
 };
 
 const TString HLT_TRIG_LIST_2018[]	= 
