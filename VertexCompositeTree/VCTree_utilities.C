@@ -1,3 +1,7 @@
+/*
+	Helper functions for Trigger Efficiency from Simulations
+*/
+
 #include "./common/VertexCompositeTree.h"
 #include "./common/constants.h"
 

@@ -1,3 +1,9 @@
+/*
+	For processing the STARlight MC only to get the trigger efficiency
+
+	JiaZhao Lin, Sep 2023
+*/
+
 #include "./VCTree_utilities.C"
 
 

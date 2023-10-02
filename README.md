@@ -2,7 +2,21 @@
 
 This repository contains code for opening ROOT trees.
 
+# Rules to follow
+1. Use C++ to process events
+2. Each directory should be self contained
+3. Plotting should be done in C++ due to the low level processing
+4. Plotting codes under the same directory may use functions from common sub-directory to avoid duplications
+
+# RECO
+For producing Reco file from RAW data only
+
+# EDM
+For processing and plotting EDM files (HLT, RECO) directly
+
 # VertexCompositeTree (VCTree)
+For processing and plotting VCTree
+
 ## 1. Efficiency
 
 ### Paired Dimuon Reconstruction Efficiency

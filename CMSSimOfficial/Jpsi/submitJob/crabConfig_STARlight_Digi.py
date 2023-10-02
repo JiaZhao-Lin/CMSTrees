@@ -33,7 +33,7 @@ config.Data.unitsPerJob = 1
 config.Data.publication = False
 #********************************************************
 
-# config.JobType.maxMemoryMB = 2000
+config.JobType.maxMemoryMB = 3000
 # config.JobType.maxJobRuntimeMin = 1000
 # config.Data.outputPrimaryDataset = "STARlight"
 config.Data.outputDatasetTag = config.General.requestName

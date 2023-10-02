@@ -9,7 +9,7 @@ fi
 fileDir="/eos/cms${1}"
 outFile=$2
 
-find $fileDir -type f -name "*.dat" > $outFile
+find $fileDir -type f -name "*.root" > $outFile
 
 # cut the first 8 characters from each line
 sed -i 's/^.\{8\}//' $outFile
