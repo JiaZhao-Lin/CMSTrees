@@ -7,15 +7,16 @@ config.section_("General")
 config.General.workArea = 'crab_projects'
 config.General.transferOutputs = True
 config.General.transferLogs = False
-request_name = "HIForward0"
-request_name += "_%s" % datetime.now().strftime("%y%m%d_%H%M%S")
+request_name = "HIForward0_ppReco"
+run_number = "374666"
+request_name += "_Run" + run_number + "_%s" % datetime.now().strftime("%y%m%d_%H%M%S")
 config.General.requestName = request_name
 
 #############################################################################################
 config.section_('JobType')
 config.JobType.pluginName = 'Analysis'
-config.JobType.psetName = 'reco_RAW2DIGI_L1Reco_RECO_PAT.py'
-config.JobType.numCores = 1
+config.JobType.psetName = 'reco_RAW2DIGI_L1Reco_RECO.py'
+config.JobType.numCores = 4
 config.JobType.allowUndistributedCMSSW = True
 
 #############################################################################################
@@ -26,18 +27,19 @@ config.Data.inputDBS = 'global'
 # config.Data.splitting = 'FileBased'
 # config.Data.unitsPerJob = 1
 #* Using FileList ***************************************
-input_filelist = "fileList/fileList_374354.txt"
+input_filelist = "/afs/cern.ch/user/j/jiazhao/Trigger/CMSSW_13_2_5_patch1/src/HLTrigger/Configuration/test/workstation/fileList/HIForward0_374666.txt"
 config.Data.userInputFiles = open(input_filelist).readlines() 
 config.Data.splitting = 'FileBased'
 config.Data.unitsPerJob = 1
 config.Data.publication = False
 #********************************************************
 
-config.JobType.maxMemoryMB = 4000
+config.JobType.maxMemoryMB = 5000
 # config.JobType.maxJobRuntimeMin = 1000
 # config.Data.outputPrimaryDataset = "STARlight"
-config.Data.outputDatasetTag = config.General.requestName
-config.Data.outLFNDirBase = '/store/group/phys_heavyions/jiazhao/Data_Run3/streamPhysicsHIForward0/%s' %  config.General.requestName
+# config.Data.outputDatasetTag = config.General.requestName
+config.Data.outputDatasetTag = run_number
+config.Data.outLFNDirBase = '/store/group/phys_heavyions/jiazhao/Data_Run3/Express/%s' %  config.General.requestName
 
 config.section_('Site')
 config.Data.ignoreLocality = True

@@ -1,3 +1,8 @@
+/*
+	For quickly checking the trigger rate of the HLT re-emulation after producing the HLTTree.
+	
+*/
+
 #include "DataFormats/FWLite/interface/Handle.h"
 
 void get_trigRate()

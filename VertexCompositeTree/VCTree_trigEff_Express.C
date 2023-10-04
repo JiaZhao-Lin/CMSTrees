@@ -12,7 +12,7 @@ const int triggers_Idx = 0;
 
 const int nbin_pt = 50;
 const double min_pt = 0;
-const double max_pt = 5;
+const double max_pt = 10;
 const int nbin_eta = 50;
 const double min_eta = -3;
 const double max_eta = 3;
@@ -32,6 +32,8 @@ TH3D *hDen_PtEtaPhi = new TH3D("hDen_PtEtaPhi", "hDen_PtEtaPhi; p_{T} [GeV]; #et
 
 TH3D *hPtRapMass = new TH3D("hPtRapMass", "hPtRapMass; p_{T} [GeV]; y; Mass [GeV]", nbin_pt, min_pt, max_pt, nbin_rap, min_rap, max_rap, nbin_mass, min_mass, max_mass);
 TH3D *hPtRapMass_trig = new TH3D("hPtRapMass_trig", "hPtRapMass_trig; p_{T} [GeV]; y; Mass [GeV]", nbin_pt, min_pt, max_pt, nbin_rap, min_rap, max_rap, nbin_mass, min_mass, max_mass);
+
+TH1D *hnTracks_generalTracks = new TH1D("hnTracks_generalTracks", "hnTracks_generalTracks; nTracks", 100, 0, 100);
 
 //# Functions ###############################################################################################################
 TH1D* cal_eff(TH3D* h3Num, TH3D* h3Den, TString projection)
@@ -55,6 +57,7 @@ void fit_mass(TH1D *h1)
 	f2->SetParNames("pol0", "pol1", "pol2");
 
 	TF1 *func = new TF1("func", "f1+f2", 2.85, 3.3);
+	// TF1 *func = new TF1("func", "f1", 2.70, 3.4);
 
 	h1->Fit("func", "");
 }
@@ -93,7 +96,9 @@ void plot_hist2D_compare(TH3D *h3Num, TH3D *h3Den, TString projection)
 	h2Num->SetMarkerColor(kRed);
 
 	//legend
-	auto legend = new TLegend(0.40, 0.3, 0.60, 0.5);
+	auto legend = new TLegend(0.40, 0.2, 0.60, 0.3);
+	// make the legend transparent
+	legend->SetFillStyle(0);
 	// legend->SetTextSize(0.03);
 	legend->AddEntry(h2Den, "Soft Muon", "p");
 	legend->AddEntry(h2Num, "Trig Muon", "p");
@@ -118,6 +123,7 @@ void plot_hist_projection(TH3D *h3)
 	h1_y->Draw();
 	c->SaveAs(Form("outFigures/%s_y.png", h3->GetName()));
 
+	fit_mass(h1_z);
 	h1_z->Draw();
 	c->SaveAs(Form("outFigures/%s_z.png", h3->GetName()));
 
@@ -129,7 +135,8 @@ void VCTree_trigEff_Express()
 {
 	// TH1::SetDefaultSumw2(kTRUE);
 	// std::string inputFile = "inFiles/2023/VCTree_STARLIGHT_CohJpsiToMuMu_5p36TeV_Run3.root";
-	std::string inputFile = "inFiles/2023/VCTree_Express_374345.root";
+	// std::string inputFile = "inFiles/2023/VCTree_Express_374345.root";
+	std::string inputFile = "inFiles/2023/VCTree_Express_374345_withTrk.root";
 	// std::string inputFile = "inFiles/2018/VertexCompositeTree_STARLIGHT_CohJpsiToMuMu_GenFilter_DiMuMC_20200906.root";
 
 	// Extract the tree
@@ -221,6 +228,8 @@ void VCTree_trigEff_Express()
 			hDen_PtEtaPhi->Fill(ptD1, etaD1, phiD1);
 			hDen_PtEtaPhi->Fill(ptD2, etaD2, phiD2);
 		}
+
+		hnTracks_generalTracks->Fill(csTree.nTracks_generalTracks());
 	}
 	cout << "total_softMuon = " << total_softMuon << endl;
 	cout << "total_trigMuon = " << total_trigMuon << endl;

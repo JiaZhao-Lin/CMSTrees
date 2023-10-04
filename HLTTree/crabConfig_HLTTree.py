@@ -7,15 +7,16 @@ config.section_("General")
 config.General.workArea = 'crab_projects'
 config.General.transferOutputs = True
 config.General.transferLogs = False
-request_name = "HLT_STARlight_CohJpsiToMuMu_132X"
-request_name += "_%s" % datetime.now().strftime("%y%m%d_%H%M%S")
+request_name = "HLT_132X"
+run_number = "374666"
+request_name += "_Run" + run_number + "_%s" % datetime.now().strftime("%y%m%d_%H%M%S")
 config.General.requestName = request_name
 
 #############################################################################################
 config.section_('JobType')
 config.JobType.pluginName = 'Analysis'
 config.JobType.psetName = 'test_pset.py'
-config.JobType.numCores = 1
+config.JobType.numCores = 4
 config.JobType.allowUndistributedCMSSW = True
 
 #############################################################################################
@@ -26,7 +27,7 @@ config.Data.inputDBS = 'phys03'
 # config.Data.splitting = 'FileBased'
 # config.Data.unitsPerJob = 1
 #* Using FileList ***************************************
-input_filelist = "fileList/Digi_132X.txt"
+input_filelist = "fileList/test.txt"
 config.Data.userInputFiles = open(input_filelist).readlines() 
 config.Data.splitting = 'FileBased'
 config.Data.unitsPerJob = 1
@@ -36,8 +37,8 @@ config.Data.publication = False
 config.JobType.maxMemoryMB = 3000
 # config.JobType.maxJobRuntimeMin = 1000
 # config.Data.outputPrimaryDataset = "STARlight"
-config.Data.outputDatasetTag = config.General.requestName
-config.Data.outLFNDirBase = '/store/group/phys_heavyions/jiazhao/STARlight/2023Run3/HLTTree/%s' %  config.General.requestName
+config.Data.outputDatasetTag = run_number
+config.Data.outLFNDirBase = '/store/group/phys_heavyions/jiazhao/Data_Run3/HLT/%s' %  config.General.requestName
 
 config.section_('Site')
 config.Data.ignoreLocality = True
