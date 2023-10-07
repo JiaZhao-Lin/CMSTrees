@@ -7,8 +7,9 @@ config.section_("General")
 config.General.workArea = 'crab_projects'
 config.General.transferOutputs = True
 config.General.transferLogs = False
-request_name = "HIForward0_ppReco"
-run_number = "374666"
+request_name = "AOD_t0streamer_PhysicsHIForward0_ppReco"
+# request_name = "AOD_HIRun2023A_HIForward0_ppReco"
+run_number = "374778"
 request_name += "_Run" + run_number + "_%s" % datetime.now().strftime("%y%m%d_%H%M%S")
 config.General.requestName = request_name
 
@@ -27,14 +28,14 @@ config.Data.inputDBS = 'global'
 # config.Data.splitting = 'FileBased'
 # config.Data.unitsPerJob = 1
 #* Using FileList ***************************************
-input_filelist = "/afs/cern.ch/user/j/jiazhao/Trigger/CMSSW_13_2_5_patch1/src/HLTrigger/Configuration/test/workstation/fileList/HIForward0_374666.txt"
+input_filelist = "./fileList/t0streamer_PhysicsHIForward0_374778.txt"
 config.Data.userInputFiles = open(input_filelist).readlines() 
 config.Data.splitting = 'FileBased'
 config.Data.unitsPerJob = 1
 config.Data.publication = False
 #********************************************************
 
-config.JobType.maxMemoryMB = 5000
+config.JobType.maxMemoryMB = 8000
 # config.JobType.maxJobRuntimeMin = 1000
 # config.Data.outputPrimaryDataset = "STARlight"
 # config.Data.outputDatasetTag = config.General.requestName

@@ -7,7 +7,8 @@ config.section_("General")
 config.General.workArea = 'crab_projects'
 config.General.transferOutputs = True
 config.General.transferLogs = False
-request_name = "HLT_132X"
+request_name = "HLT_t0streamer_PhysicsHIForward0_ppReco"
+# request_name = "HLT_HIRun2023A_HIForward0_ppReco"
 run_number = "374666"
 request_name += "_Run" + run_number + "_%s" % datetime.now().strftime("%y%m%d_%H%M%S")
 config.General.requestName = request_name

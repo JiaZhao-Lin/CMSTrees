@@ -10,23 +10,24 @@
 //# Global Variables #######################################################################################################
 const int triggers_Idx = 0;
 
-const int nbin_pt = 50;
+const int nbin_pt = 100;
 const double min_pt = 0;
-const double max_pt = 10;
-const int nbin_eta = 50;
+const double max_pt = 4;
+const int nbin_eta = 100;
 const double min_eta = -3;
 const double max_eta = 3;
-const int nbin_phi = 50;
-const double min_phi = -3.2;
-const double max_phi = 3.2;
+const int nbin_phi = 100;
+const double min_phi = -3.14;
+const double max_phi = 3.14;
 const int nbin_mass = 100;
-const double min_mass = 0;
+const double min_mass = 2;
 const double max_mass = 5;
-const int nbin_rap = 50;
+const int nbin_rap = 100;
 const double min_rap = -2.6;
 const double max_rap = 2.6;
 
 //# Histograms ##############################################################################################################
+TH1D *hRunNb = new TH1D("hRunNb", "hRunNb; Run Number", 200, 374700, 374900);
 TH3D *hNum_PtEtaPhi = new TH3D("hNum_PtEtaPhi", "hNum_PtEtaPhi; p_{T} [GeV]; #eta; #phi", nbin_pt, min_pt, max_pt, nbin_eta, min_eta, max_eta, nbin_phi, min_phi, max_phi);
 TH3D *hDen_PtEtaPhi = new TH3D("hDen_PtEtaPhi", "hDen_PtEtaPhi; p_{T} [GeV]; #eta; #phi", nbin_pt, min_pt, max_pt, nbin_eta, min_eta, max_eta, nbin_phi, min_phi, max_phi);
 
@@ -51,15 +52,73 @@ TH1D* cal_eff(TH3D* h3Num, TH3D* h3Den, TString projection)
 void fit_mass(TH1D *h1)
 {
 	//= fit the mass distribution with a crystal ball function within a jpis mass window =================
-	TF1 *f1 = new TF1("f1", "crystalball", 2.85, 3.3);
-	f1->SetParameters(20, 3.1, 0.1, 1, 1);
-	TF1 *f2 = new TF1("f2", "pol2", 2.85, 3.3);
-	f2->SetParNames("pol0", "pol1", "pol2");
+	// TF1 *f1 = new TF1("f1", "crystalball", 2.85, 3.3);
+	// f1->SetParameters(20, 3.1, 0.1, 1, 1);
+	// TF1 *f2 = new TF1("f2", "pol2", 2.85, 3.3);
+	// f2->SetParNames("pol0", "pol1", "pol2");
 
-	TF1 *func = new TF1("func", "f1+f2", 2.85, 3.3);
-	// TF1 *func = new TF1("func", "f1", 2.70, 3.4);
+	// TF1 *func = new TF1("func", "f1+f2", 2, 5);
+	// // TF1 *func = new TF1("func", "f1", 2.70, 3.4);
 
-	h1->Fit("func", "");
+	// h1->Fit("func", "R");
+
+	//= use roofit to fit two crystal ball functions, one at the Jpsi mass and one at the psi(2S) mass, and a pol2 background function =================
+	RooRealVar x("x", "mass", 2.0, 5);
+	RooRealVar  JpsiMean("JpsiMean", "JpsiMean", 3.1, 2.9, 3.3);
+	RooRealVar  JpsiSigma("JpsiSigma", "JpsiSigma", 0.04, 0.01, 0.2);
+	RooRealVar  JpsiAlpha("JpsiAlpha", "JpsiAlpha", 1, 0.1, 10);
+	RooRealVar  JpsiN("JpsiN", "JpsiN", 5, 0.1, 20);
+	RooCBShape Jpsi("Jpsi", "Jpsi", x, JpsiMean, JpsiSigma, JpsiAlpha, JpsiN);
+
+
+	RooConstVar massRatio = RooConstVar(  "massRatio",   "massRatio",   3.686/3.097 );
+	// psiMu = jpsiMu * massRatio; psiSigma = jpsiSigma * massRatio
+	RooFormulaVar Psi2SMean("Psi2SMean", "Psi2SMean", "@0*@1", RooArgList(JpsiMean, massRatio));
+	RooFormulaVar Psi2SSigma("Psi2SSigma", "Psi2SSigma", "@0*@1", RooArgList(JpsiSigma, massRatio));
+	RooCBShape Psi2S("Psi2S", "Psi2S", x, Psi2SMean, Psi2SSigma, JpsiAlpha, JpsiN);
+
+	RooRealVar  pol0("pol0", "pol0", 10, 0, 100);
+	RooRealVar  pol1("pol1", "pol1", -2, -10, 10);
+	RooRealVar  pol2("pol2", "pol2", 1, -20, 20);
+	RooPolynomial Bkg("Bkg", "Bkg", x, RooArgList(pol0));
+	// RooPolynomial Bkg("Bkg", "Bkg", x, RooArgList(pol0, pol1));
+	// RooPolynomial Bkg("Bkg", "Bkg", x, RooArgList(pol0, pol1, pol2));
+
+	double nJpsi_init = h1->Integral(h1->FindBin(3.0), h1->FindBin(3.2));
+	double nPsi2S_init = nJpsi_init * 0.05;
+	//use sideband to estimate the background
+	double nBkg_init = h1->Integral(h1->FindBin(2.), h1->FindBin(2.8)) + h1->Integral(h1->FindBin(3.3), h1->FindBin(3.5)) + h1->Integral(h1->FindBin(3.7), h1->FindBin(5.0));
+
+	RooRealVar nJpsi("nJpsi", "nJpsi", nJpsi_init, 0, nJpsi_init * 10);
+	RooRealVar nPsi2S("nPsi2S", "nPsi2S", nPsi2S_init, 0, nPsi2S_init * 10);
+	RooRealVar nBkg("nBkg", "nBkg", nBkg_init, 0, nBkg_init * 10);
+
+	RooAddPdf totMassPdf("totMassPdf", "totMassPdf", RooArgList(Jpsi, Psi2S, Bkg), RooArgList(nJpsi, nPsi2S, nBkg));
+	// RooAddPdf totMassPdf("totMassPdf", "totMassPdf", RooArgList(Jpsi, Bkg), RooArgList(nJpsi, nBkg));
+
+	// h1->Rebin(2);
+	RooDataHist dataMass("dataMass", "dataMass", x, h1);
+	auto fitResult = totMassPdf.fitTo(dataMass, RooFit::Extended(kTRUE), RooFit::SumW2Error(kTRUE), RooFit::Hesse(kTRUE), RooFit::Minos(kFALSE), RooFit::PrintLevel(-1), RooFit::Save(kTRUE));
+
+	RooPlot *frame = x.frame();
+	dataMass.plotOn(frame, RooFit::MarkerStyle(20), RooFit::MarkerSize(1), RooFit::MarkerColor(2), RooFit::LineColor(2), RooFit::LineWidth(2), RooFit::DrawOption("pz"));
+	totMassPdf.plotOn(frame, RooFit::LineColor(1), RooFit::LineStyle(1), RooFit::LineWidth(2));
+	totMassPdf.plotOn(frame, RooFit::Components("Jpsi"), RooFit::LineColor(kRed), 		RooFit::LineStyle(5), RooFit::LineWidth(2));
+	totMassPdf.plotOn(frame, RooFit::Components("Psi2S"), RooFit::LineColor(kGreen), 	RooFit::LineStyle(6), RooFit::LineWidth(2));
+	totMassPdf.plotOn(frame, RooFit::Components("Bkg"), RooFit::LineColor(kBlue), 		RooFit::LineStyle(2), RooFit::LineWidth(3));
+	totMassPdf.paramOn(frame, RooFit::Layout(0.5, 0.9, 0.9));
+	frame->Draw();
+	//draw chi2/ndf on the plot
+	double chi2 = frame->chiSquare("totMassPdf_Norm[x]", "h_dataMass", fitResult->floatParsFinal().getSize());
+	TLatex *t = new TLatex();
+	t->SetNDC();
+	t->SetTextFont(42);
+	t->SetTextSize(0.04);
+	// cout << "chi2/ndf = " << chi2 << endl;
+	t->DrawLatex(0.15, 0.85, Form("#chi^{2}/ndf = %.2f", chi2));
+
+
+	
 }
 
 void plot_eff(TH1D* hEff)
@@ -117,14 +176,14 @@ void plot_hist_projection(TH3D *h3)
 	TH1D *h1_y = (TH1D*)h3->Project3D("y");
 	TH1D *h1_z = (TH1D*)h3->Project3D("z");
 
-	h1_x->Draw();
+	h1_x->Draw("E");
 	c->SaveAs(Form("outFigures/%s_x.png", h3->GetName()));
 
-	h1_y->Draw();
+	h1_y->Draw("E");
 	c->SaveAs(Form("outFigures/%s_y.png", h3->GetName()));
 
 	fit_mass(h1_z);
-	h1_z->Draw();
+	// h1_z->Draw("same E");
 	c->SaveAs(Form("outFigures/%s_z.png", h3->GetName()));
 
 	delete c;
@@ -136,7 +195,14 @@ void VCTree_trigEff_Express()
 	// TH1::SetDefaultSumw2(kTRUE);
 	// std::string inputFile = "inFiles/2023/VCTree_STARLIGHT_CohJpsiToMuMu_5p36TeV_Run3.root";
 	// std::string inputFile = "inFiles/2023/VCTree_Express_374345.root";
-	std::string inputFile = "inFiles/2023/VCTree_Express_374345_withTrk.root";
+	// std::string inputFile = "inFiles/2023/VCTree_HIForward0_streamer_ppReco_Run374719.root";
+	// std::string inputFile = "inFiles/2023/VCTree_HIForward0_streamer_ppReco_Run374778.root";
+	// std::string inputFile = "inFiles/2023/VCTree_HIForward0_streamer_ppReco_Run374803.root";
+	std::string inputFile = "inFiles/2023/VCTree_HIForward0_streamer_ppReco_Run374810.root";
+	// std::string inputFile = "inFiles/2023/VCTree_HIForward0_streamer_ppReco_Run374719_374730_374778_374803_374810_374833.root";
+
+	// std::string inputFile = "inFiles/2023/VCTree_Express_374345_withTrk.root";
+	// std::string inputFile = "inFiles/2023/VCTree_HIReco_Run374666.root";
 	// std::string inputFile = "inFiles/2018/VertexCompositeTree_STARLIGHT_CohJpsiToMuMu_GenFilter_DiMuMC_20200906.root";
 
 	// Extract the tree
@@ -153,21 +219,24 @@ void VCTree_trigEff_Express()
 			cout << "Invalid correct-sign entry!" << endl;
 			return;
 		}
-
 		//= Event Level Selections ============================================================
 		//= Check SkimTree code for EvtSel() index ============================================
 		// Bool_t goodVtx				= (csTree.evtSel()[2] && csTree.evtSel()[3]);
+		Bool_t goodVtx				=  csTree.evtSel()[2];
 		// Bool_t goodHFVeto 			= (!csTree.evtSel()[16] && !csTree.evtSel()[17]);
 		Bool_t passNTrkHP 			= csTree.NtrkHP() == 2;	// contain only two high-purity tracks and nothing else
 		// Bool_t passEvtSel 			= goodVtx && goodHFVeto && passNTrkHP;
 		// Bool_t passNRecoCandidate 	= csTree.candSize() > 0;
+		Bool_t passHFVeto 			= (csTree.HFmaxETPlus() < 7.3) && (csTree.HFmaxETMinus() < 7.6);
 
 		// if (goodVtx)				hnEvts->Fill(1.5);
 		// if (goodVtx && goodHFVeto)	hnEvts->Fill(2.5);
 		// if (passEvtSel) 			hnEvts->Fill(3.5);
 		// if (passNRecoCandidate)		hnEvts->Fill(4.5);
 
+		if (!goodVtx) continue;
 		if (!passNTrkHP) continue;
+		// if (!passHFVeto) continue;
 
 		// for (int imu = 0; imu < csTree.candSize_mu(); ++imu)
 		// {
@@ -194,11 +263,16 @@ void VCTree_trigEff_Express()
 			if (!csTree.softMuon2()[icand]) continue;
 			if (!csTree.HPMuon1()[icand]) continue;
 			if (!csTree.HPMuon2()[icand]) continue;
-			total_softMuon += 2;
 
 			double mass = csTree.mass()[icand];
 			double rap = csTree.y()[icand];
 			double pt = csTree.pT()[icand];
+
+			if (mass < 2.0 || mass > 5.) continue;
+			if (abs(rap) < 1.6 || abs(rap) > 2.4 ) continue;
+
+			hRunNb->Fill(csTree.RunNb());
+			total_softMuon += 2;
 			hPtRapMass->Fill(pt, rap, mass);
 
 			double ptD1 = csTree.pTD1()[icand];
@@ -229,7 +303,7 @@ void VCTree_trigEff_Express()
 			hDen_PtEtaPhi->Fill(ptD2, etaD2, phiD2);
 		}
 
-		hnTracks_generalTracks->Fill(csTree.nTracks_generalTracks());
+		// hnTracks_generalTracks->Fill(csTree.nTracks_generalTracks());
 	}
 	cout << "total_softMuon = " << total_softMuon << endl;
 	cout << "total_trigMuon = " << total_trigMuon << endl;
@@ -241,5 +315,11 @@ void VCTree_trigEff_Express()
 	plot_eff(hEff_y);
 	plot_eff(hEff_z);
 	plot_hist2D_compare(hNum_PtEtaPhi, hDen_PtEtaPhi, "xy");
+	plot_hist_projection(hNum_PtEtaPhi);
+	plot_hist_projection(hPtRapMass);
 	plot_hist_projection(hPtRapMass_trig);
+
+	auto c = new TCanvas("c", "", 800, 600);
+	hRunNb->Draw();
+	c->SaveAs("outFigures/hRunNb.png");
 }

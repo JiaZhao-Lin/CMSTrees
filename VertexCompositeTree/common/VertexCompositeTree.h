@@ -54,6 +54,8 @@ class VertexCompositeTree {
         Int_t     NpixelTracks()                { SetBranch("NpixelTracks");                return NpixelTracks_;               }
         Float_t   HFsumETPlus()                 { SetBranch("HFsumETPlus");                 return HFsumETPlus_;                }
         Float_t   HFsumETMinus()                { SetBranch("HFsumETMinus");                return HFsumETMinus_;               }
+        Float_t   HFmaxETPlus()                 { SetBranch("HFmaxETPlus");                 return HFmaxETPlus_;               }
+        Float_t   HFmaxETMinus()                { SetBranch("HFmaxETMinus");                return HFmaxETMinus_;               }
         Float_t   ZDCPlus()                     { SetBranch("ZDCPlus");                     return ZDCPlus_;                    }
         Float_t   ZDCMinus()                    { SetBranch("ZDCMinus");                    return ZDCMinus_;                   }
         Int_t     Ntrkoffline()                 { SetBranch("Ntrkoffline");                 return Ntrkoffline_;                }
@@ -264,6 +266,8 @@ class VertexCompositeTree {
         Int_t             NpixelTracks_=-1;
         Float_t           HFsumETPlus_=-1.;
         Float_t           HFsumETMinus_=-1.;
+        Float_t           HFmaxETPlus_=-1.;
+        Float_t           HFmaxETMinus_=-1.;
         Float_t           ZDCPlus_=-1.;
         Float_t           ZDCMinus_=-1.;
         Int_t             Ntrkoffline_=-1;
@@ -549,6 +553,8 @@ void VertexCompositeTree::InitTree(void)
         if (fChain->GetBranch("NpixelTracks"))                fChain->SetBranchAddress("NpixelTracks",              &NpixelTracks_,               &(b["NpixelTracks"])                    );
         if (fChain->GetBranch("HFsumETPlus"))                 fChain->SetBranchAddress("HFsumETPlus",               &HFsumETPlus_,                &(b["HFsumETPlus"])               );
         if (fChain->GetBranch("HFsumETMinus"))                fChain->SetBranchAddress("HFsumETMinus",              &HFsumETMinus_,               &(b["HFsumETMinus"])              );
+        if (fChain->GetBranch("HFmaxETPlus"))                 fChain->SetBranchAddress("HFmaxETPlus",               &HFmaxETPlus_,                &(b["HFmaxETPlus"])              );
+        if (fChain->GetBranch("HFmaxETMinus"))                fChain->SetBranchAddress("HFmaxETMinus",              &HFmaxETMinus_,               &(b["HFmaxETMinus"])              );
         if (fChain->GetBranch("ZDCPlus"))                     fChain->SetBranchAddress("ZDCPlus",                   &ZDCPlus_,                    &(b["ZDCPlus"])                   );
         if (fChain->GetBranch("ZDCMinus"))                    fChain->SetBranchAddress("ZDCMinus",                  &ZDCMinus_,                   &(b["ZDCMinus"])                  );
         if (fChain->GetBranch("Ntrkoffline"))                 fChain->SetBranchAddress("Ntrkoffline",               &Ntrkoffline_,                &(b["Ntrkoffline"])               );
@@ -708,6 +714,8 @@ void VertexCompositeTree::Clear(void)
     if (GetBranchStatus("NpixelTracks")==1) NpixelTracks_ = -1;
     if (GetBranchStatus("HFsumETPlus")==1)  HFsumETPlus_  = -1.;
     if (GetBranchStatus("HFsumETMinus")==1) HFsumETMinus_ = -1.;
+    if (GetBranchStatus("HFmaxETPlus")==1)  HFmaxETPlus_ = -1.;
+    if (GetBranchStatus("HFmaxETMinus")==1) HFmaxETMinus_ = -1.;
     if (GetBranchStatus("ZDCPlus")==1)      ZDCPlus_      = -1.;
     if (GetBranchStatus("ZDCMinus")==1)     ZDCMinus_     = -1.;
     if (GetBranchStatus("Ntrkoffline")==1)  Ntrkoffline_  = -1;
