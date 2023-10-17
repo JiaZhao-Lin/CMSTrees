@@ -4,17 +4,16 @@ from CRABClient.UserUtilities import config
 config = config()
 
 ## User Input ##############################################################################
-pset_name		= 'step2_STARlight_Digi_cfg.py'
+pset_name 		= 'reco_RAW2DIGI_L1Reco_RECO.py'
 
-request_name	= 'STARlight_CohPhiToKK_Digi_132X'
-channel			= 'CohPhiToKK'
-request_name	+= '_%s' % datetime.now().strftime('%y%m%d_%H%M%S')
+request_name 	= 'RAWSKIM_hidata_HIForward0'
+run_number 		= '374810'
+request_name 	+= '_Run' + run_number + '_%s' % datetime.now().strftime('%y%m%d_%H%M%S')
 
-input_filelist	= '/afs/cern.ch/user/j/jiazhao/fileList/STARlight/CohPhiToKK_132X_GenSim.txt'
-# input_dataset	= ''
+input_filelist 	= '/afs/cern.ch/user/j/jiazhao/fileList/RAW/hidata_HIForward0_374810.txt'
+input_dataset	= ''
 
-output_pd		= 'STARlight'
-output_dir		= '/store/group/phys_heavyions/jiazhao/STARlight/2023Run3/Digi/%s' %  request_name
+output_dir 		= '/store/group/phys_heavyions/jiazhao/Data_Run3/RAWSKIM/%s' %  request_name
 
 ## General #################################################################################
 config.section_('General')
@@ -28,13 +27,13 @@ config.section_('JobType')
 config.JobType.pluginName = 'Analysis'
 config.JobType.psetName = pset_name
 config.JobType.numCores = 4
-config.JobType.maxMemoryMB = 4000
+config.JobType.maxMemoryMB = 8000
 # config.JobType.maxJobRuntimeMin = 1000
 config.JobType.allowUndistributedCMSSW = True
 
 ## Data #####################################################################################
 config.section_('Data')
-config.Data.inputDBS = 'phys03'
+config.Data.inputDBS = 'global'
 #* Using Dataset from DAS *******************************
 # config.Data.inputDataset = input_dataset
 # config.Data.splitting = 'FileBased'
@@ -46,8 +45,9 @@ config.Data.unitsPerJob = 1
 config.Data.publication = False
 #********************************************************
 
-config.Data.outputPrimaryDataset = output_pd
-config.Data.outputDatasetTag = channel
+# config.Data.outputPrimaryDataset = 'STARlight'
+# config.Data.outputDatasetTag = config.General.requestName
+config.Data.outputDatasetTag = run_number
 config.Data.outLFNDirBase = output_dir
 config.Data.ignoreLocality = True
 

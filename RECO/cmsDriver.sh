@@ -10,7 +10,7 @@ cmsDriver.py reco  --conditions 132X_dataRun3_Express_v4 -s RAW2DIGI,L1Reco,RECO
 # RAW - AOD, pp reco from root file
 cmsDriver.py reco  --conditions 132X_dataRun3_Express_v4 -s RAW2DIGI,L1Reco,RECO --datatier RECO --eventcontent AOD --data  --process RECO --scenario pp --customise Configuration/DataProcessing/RecoTLR.customisePostEra_Run3 --no_exec --era Run3_2023 --repacked --filein file:/eos/cms/store/t0streamer/Data/PhysicsHIForward0/000/374/803/run374803_ls0284_streamPhysicsHIForward0_StorageManager.dat --nThreads 4 -n 10 
 
-
+cmsDriver.py reco  --conditions 132X_dataRun3_Prompt_v4 -s RAW2DIGI,L1Reco,RECO --datatier RECO --eventcontent AOD --data  --process RECO --scenario pp --customise Configuration/DataProcessing/RecoTLR.customisePostEra_Run3 --no_exec --era Run3_2023 --repacked --filein file:/afs/cern.ch/user/j/jiazhao/RecoProductions/CMSSW_13_2_5_patch1/src/Reco/skim_RAW_ForUPCPhi.root --nThreads 4 -n 10
 
 
 
