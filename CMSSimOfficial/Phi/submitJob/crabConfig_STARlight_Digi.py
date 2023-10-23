@@ -28,7 +28,7 @@ config.section_('JobType')
 config.JobType.pluginName = 'Analysis'
 config.JobType.psetName = pset_name
 config.JobType.numCores = 4
-config.JobType.maxMemoryMB = 4000
+config.JobType.maxMemoryMB = 8000
 # config.JobType.maxJobRuntimeMin = 1000
 config.JobType.allowUndistributedCMSSW = True
 

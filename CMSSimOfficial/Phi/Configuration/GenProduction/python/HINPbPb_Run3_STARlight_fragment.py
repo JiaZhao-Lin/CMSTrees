@@ -1,7 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 
 externalLHEProducer = cms.EDProducer("ExternalLHEProducer",
-    args = cms.vstring('../starlight_slight_CohPhiToKK_Run3_el8_amd64_gcc11_CMSSW_13_2_5_patch3_tarball.tgz'),
+    args = cms.vstring('../starlight_slight_CohPhiToKK_Run3_el8_amd64_gcc11_CMSSW_13_2_6_patch2_tarball.tgz'),
     nEvents = cms.untracked.uint32(1),
     numberOfParameters = cms.uint32(1),
     outputFile = cms.string('cmsgrid_final.lhe'),
@@ -23,10 +23,11 @@ generator = cms.EDFilter("Pythia8HadronizerFilter",
 )
 
 
-diKafilter = cms.EDFilter("PythiaFilter",
-    MaxAbsRapidity = cms.untracked.double(3.0),
-    # MinAbsRapidity = cms.untracked.double(1.3),
-    ParticleID = cms.untracked.int32(333)
-)
+# diKafilter = cms.EDFilter("PythiaFilter",
+#     MaxAbsRapidity = cms.untracked.double(3.0),
+#     MinAbsRapidity = cms.untracked.double(1.3),
+#     ParticleID = cms.untracked.int32(333)
+# )
 
-ProductionFilterSequence = cms.Sequence(generator+diKafilter)
+# ProductionFilterSequence = cms.Sequence(generator+diKafilter)
+ProductionFilterSequence = cms.Sequence(generator)

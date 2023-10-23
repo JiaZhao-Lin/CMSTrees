@@ -11,7 +11,7 @@ channel			= 'CohPhiToKK'
 request_name	+= '_%s' % datetime.now().strftime('%y%m%d_%H%M%S')
 
 # input_filelist	= './fileList/t0streamer_PhysicsHIForward0_374778.txt'
-input_file		= 'starlight_slight_CohPhiToKK_Run3_el8_amd64_gcc11_CMSSW_13_2_5_patch3_tarball.tgz'
+input_file		= 'starlight_slight_CohPhiToKK_Run3_el8_amd64_gcc11_CMSSW_13_2_6_patch2_tarball.tgz'
 # input_dataset	= ''
 
 output_pd		= 'STARlight'
@@ -29,8 +29,8 @@ config.section_('JobType')
 config.JobType.pluginName = 'PrivateMC'
 config.JobType.inputFiles = [input_file]
 config.JobType.psetName = pset_name
-config.JobType.numCores = 4
-config.JobType.maxMemoryMB = 4000
+config.JobType.numCores = 1
+# config.JobType.maxMemoryMB = 4000
 # config.JobType.maxJobRuntimeMin = 1000
 config.JobType.allowUndistributedCMSSW = True
 
@@ -48,8 +48,8 @@ config.section_('Data')
 # config.Data.publication = False
 
 config.Data.splitting	= 'EventBased'
-config.Data.unitsPerJob = 2000
-NJOBS = 500
+config.Data.unitsPerJob = 1000
+NJOBS = 1000
 config.Data.totalUnits = config.Data.unitsPerJob * NJOBS
 config.Data.publication = False
 #********************************************************
