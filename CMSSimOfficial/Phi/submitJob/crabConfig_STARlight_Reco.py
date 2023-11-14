@@ -4,17 +4,17 @@ from CRABClient.UserUtilities import config
 config = config()
 
 ## User Input ##############################################################################
-pset_name		= 'step3_STARlight_Reco_cfg.py'
+pset_name       = 'step3_STARlight_Reco_cfg.py'
 
-request_name	= 'STARlight_CohPhiToKK_Reco_132X'
-channel			= 'CohPhiToKK'
-request_name	+= '_%s' % datetime.now().strftime('%y%m%d_%H%M%S')
+request_name    = 'STARlight_CohPhiToKK_Reco_132X'
+channel         = 'CohPhiToKK'
+request_name    += '_%s' % datetime.now().strftime('%y%m%d_%H%M%S')
 
-input_filelist	= '/afs/cern.ch/user/j/jiazhao/fileList/STARlight/CohPhiToKK_132X_Digi.txt'
-# input_dataset	= ''
+input_filelist  = '/afs/cern.ch/user/j/jiazhao/fileList/STARlight/CohPhiToKK_132X_Digi.txt'
+# input_dataset = ''
 
-output_pd		= 'STARlight'
-output_dir		= '/store/group/phys_heavyions/jiazhao/STARlight/2023Run3/Reco/%s' %  request_name
+output_pd       = 'STARlight'
+output_dir      = '/store/group/phys_heavyions/jiazhao/STARlight/2023Run3/Reco/%s' %  request_name
 
 ## General #################################################################################
 config.section_('General')
