@@ -63,7 +63,7 @@ void fit_mass(TH1D *h1)
 	// h1->Fit("func", "R");
 
 	//= use roofit to fit two crystal ball functions, one at the Jpsi mass and one at the psi(2S) mass, and a pol2 background function =================
-	RooRealVar x("x", "mass", 2.0, 5);
+	RooRealVar x("x", "m_{#mu^{+}#mu^{-}} [GeV]", 2.0, 5);
 	RooRealVar  JpsiMean("JpsiMean", "JpsiMean", 3.1, 2.9, 3.3);
 	RooRealVar  JpsiSigma("JpsiSigma", "JpsiSigma", 0.04, 0.01, 0.2);
 	RooRealVar  JpsiAlpha("JpsiAlpha", "JpsiAlpha", 1, 0.1, 10);
@@ -96,7 +96,7 @@ void fit_mass(TH1D *h1)
 	RooAddPdf totMassPdf("totMassPdf", "totMassPdf", RooArgList(Jpsi, Psi2S, Bkg), RooArgList(nJpsi, nPsi2S, nBkg));
 	// RooAddPdf totMassPdf("totMassPdf", "totMassPdf", RooArgList(Jpsi, Bkg), RooArgList(nJpsi, nBkg));
 
-	// h1->Rebin(2);
+	h1->Rebin(2);
 	RooDataHist dataMass("dataMass", "dataMass", x, h1);
 	auto fitResult = totMassPdf.fitTo(dataMass, RooFit::Extended(kTRUE), RooFit::SumW2Error(kTRUE), RooFit::Hesse(kTRUE), RooFit::Minos(kFALSE), RooFit::PrintLevel(-1), RooFit::Save(kTRUE));
 
@@ -106,16 +106,32 @@ void fit_mass(TH1D *h1)
 	totMassPdf.plotOn(frame, RooFit::Components("Jpsi"), RooFit::LineColor(kRed), 		RooFit::LineStyle(5), RooFit::LineWidth(2));
 	totMassPdf.plotOn(frame, RooFit::Components("Psi2S"), RooFit::LineColor(kGreen), 	RooFit::LineStyle(6), RooFit::LineWidth(2));
 	totMassPdf.plotOn(frame, RooFit::Components("Bkg"), RooFit::LineColor(kBlue), 		RooFit::LineStyle(2), RooFit::LineWidth(3));
-	totMassPdf.paramOn(frame, RooFit::Layout(0.5, 0.9, 0.9));
+	// totMassPdf.paramOn(frame, RooFit::Layout(0.5, 0.9, 0.9));
+	//Set y axis label
+	frame->GetYaxis()->SetTitle(Form("Events / (%.2f GeV)", h1->GetBinWidth(1)));
 	frame->Draw();
 	//draw chi2/ndf on the plot
 	double chi2 = frame->chiSquare("totMassPdf_Norm[x]", "h_dataMass", fitResult->floatParsFinal().getSize());
+	
+	// add legend
+	TLegend *leg = new TLegend(0.65, 0.55, 0.9, 0.85);
+	leg->SetBorderSize(0);
+	leg->SetFillStyle(0);
+	leg->AddEntry(frame->findObject("h_dataMass"), "Data", "pe");
+	leg->AddEntry(frame->findObject("totMassPdf_Norm[x]"), "Fit", "l");
+	leg->AddEntry(frame->findObject("totMassPdf_Norm[x]_Comp[Jpsi]"), "J/#psi", "l");
+	leg->AddEntry(frame->findObject("totMassPdf_Norm[x]_Comp[Psi2S]"), "#psi(2S)", "l");
+	leg->AddEntry(frame->findObject("totMassPdf_Norm[x]_Comp[Bkg]"), "Bkg", "l");
+	leg->Draw("same");
+	
 	TLatex *t = new TLatex();
 	t->SetNDC();
 	t->SetTextFont(42);
-	t->SetTextSize(0.04);
+	t->SetTextSize(0.05);
 	// cout << "chi2/ndf = " << chi2 << endl;
-	t->DrawLatex(0.15, 0.85, Form("#chi^{2}/ndf = %.2f", chi2));
+	// t->DrawLatex(0.15, 0.85, Form("#chi^{2}/ndf = %.2f", chi2));
+	t->DrawLatex(0.13, 0.94, Form("#bf{CMS} #it{Preliminary}"));
+	t->DrawLatex(0.62, 0.94, Form("PbPb (2023, 5.36 TeV)"));
 
 
 	
@@ -176,11 +192,11 @@ void plot_hist_projection(TH3D *h3)
 	TH1D *h1_y = (TH1D*)h3->Project3D("y");
 	TH1D *h1_z = (TH1D*)h3->Project3D("z");
 
-	h1_x->Draw("E");
-	c->SaveAs(Form("outFigures/%s_x.png", h3->GetName()));
+	// h1_x->Draw("E");
+	// c->SaveAs(Form("outFigures/%s_x.png", h3->GetName()));
 
-	h1_y->Draw("E");
-	c->SaveAs(Form("outFigures/%s_y.png", h3->GetName()));
+	// h1_y->Draw("E");
+	// c->SaveAs(Form("outFigures/%s_y.png", h3->GetName()));
 
 	fit_mass(h1_z);
 	// h1_z->Draw("same E");
@@ -198,8 +214,8 @@ void VCTree_trigEff_Express()
 	// std::string inputFile = "inFiles/2023/VCTree_HIForward0_streamer_ppReco_Run374719.root";
 	// std::string inputFile = "inFiles/2023/VCTree_HIForward0_streamer_ppReco_Run374778.root";
 	// std::string inputFile = "inFiles/2023/VCTree_HIForward0_streamer_ppReco_Run374803.root";
-	std::string inputFile = "inFiles/2023/VCTree_HIForward0_streamer_ppReco_Run374810.root";
-	// std::string inputFile = "inFiles/2023/VCTree_HIForward0_streamer_ppReco_Run374719_374730_374778_374803_374810_374833.root";
+	// std::string inputFile = "inFiles/2023/VCTree_HIForward0_streamer_ppReco_Run374810.root";
+	std::string inputFile = "inFiles/2023/VCTree_HIForward0_streamer_ppReco_Run374719_374730_374778_374803_374810_374833.root";
 
 	// std::string inputFile = "inFiles/2023/VCTree_Express_374345_withTrk.root";
 	// std::string inputFile = "inFiles/2023/VCTree_HIReco_Run374666.root";
@@ -311,12 +327,12 @@ void VCTree_trigEff_Express()
 	TH1D *hEff_x = cal_eff(hNum_PtEtaPhi, hDen_PtEtaPhi, "x");
 	TH1D *hEff_y = cal_eff(hNum_PtEtaPhi, hDen_PtEtaPhi, "y");
 	TH1D *hEff_z = cal_eff(hNum_PtEtaPhi, hDen_PtEtaPhi, "z");
-	plot_eff(hEff_x);
-	plot_eff(hEff_y);
-	plot_eff(hEff_z);
-	plot_hist2D_compare(hNum_PtEtaPhi, hDen_PtEtaPhi, "xy");
-	plot_hist_projection(hNum_PtEtaPhi);
-	plot_hist_projection(hPtRapMass);
+	// plot_eff(hEff_x);
+	// plot_eff(hEff_y);
+	// plot_eff(hEff_z);
+	// plot_hist2D_compare(hNum_PtEtaPhi, hDen_PtEtaPhi, "xy");
+	// plot_hist_projection(hNum_PtEtaPhi);
+	// plot_hist_projection(hPtRapMass);
 	plot_hist_projection(hPtRapMass_trig);
 
 	auto c = new TCanvas("c", "", 800, 600);

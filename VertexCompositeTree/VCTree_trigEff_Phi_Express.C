@@ -59,7 +59,7 @@ TH3D *hKaonPtEtaPhi = new TH3D("hKaonPtEtaPhi", "hKaonPtEtaPhi; p_{T} [GeV/c]; #
 
 TH3D *hPtRapMass = new TH3D("hPtRapMass", "hPtRapMass; p_{T} [GeV/c]; Rapidity; Mass [GeV/c^{2}]", nbin_pt, min_pt, max_pt, nbin_rap, min_rap, max_rap, nbin_mass, min_mass, max_mass);
 
-TH3D *hdEdxPPt = new TH3D("hdEdxPPt", "hdEdxPPt; dEdx; p; p_{T}", 240, 0, 12, 200, 0, 1, 100, 0, 10);
+TH3D *hdEdxPPt = new TH3D("hdEdxPPt", "hdEdxPPt; dE/dx [MeV/cm]; p [GeV]; p_{T}", 240, 0, 12, 200, 0, 1, 100, 0, 10);
 
 //# Functions ###############################################################################################################
 TH1D* cal_eff(TH3D* h3Num, TH3D* h3Den, TString projection)
@@ -144,6 +144,13 @@ void plot_hist2D(TH3D *h3, TString projection, TString title)
 
 	// //set log z axis
 	// gPad->SetLogz();
+
+	TLatex *t = new TLatex();
+	t->SetNDC();
+	t->SetTextFont(42);
+	t->SetTextSize(0.05);
+	t->DrawLatex(0.13, 0.94, Form("#bf{CMS} #it{Preliminary}"));
+	t->DrawLatex(0.52, 0.94, Form("PbPb (2023, 5.36 TeV)"));
 
 	c->SaveAs(Form("outFigures/%s.png", title.Data()));
 
@@ -400,10 +407,10 @@ void VCTree_trigEff_Phi_Express()
 	// plot_hist2D_compare(hPosKaonPtEtaPhi, hNegKaonPtEtaPhi, "xy", "dataPhi/hPosNegKaonPtEtaPhi");
 
 	hKaonPtEtaPhi->Add(hPosKaonPtEtaPhi, hNegKaonPtEtaPhi);
-	plot_hist_projection(hPtRapMass);
-	plot_hist_projection(hKaonPtEtaPhi);
+	// plot_hist_projection(hPtRapMass);
+	// plot_hist_projection(hKaonPtEtaPhi);
 	
-	plot_hist2D(hKaonPtEtaPhi, "xy", "dataPhi/hKaonPtEtaPhi");
+	// plot_hist2D(hKaonPtEtaPhi, "xy", "dataPhi/hKaonPtEtaPhi");
 
 	plot_hist2D(hdEdxPPt, "xy", "dataPhi/hdEdxPPt");
 }
