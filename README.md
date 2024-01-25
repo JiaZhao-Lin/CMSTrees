@@ -98,7 +98,7 @@ process.GlobalTag.toGet.extend([cms.PSet(record = cms.string('L1TUtmTriggerMenuR
 1. `crab submit crabConfig_STARlight_Reco.py`
 1. `./getFileList.sh OutputDirectory fileList/CohJpsi_100k_Reco.txt`
 
-# Official $phi$ CMS Simulation
+# Official $\phi$ CMS Simulation
 For Run3, STARlight Production should be submitted using official CMS production instructions.
 See the Twiki page for the latest information:
 https://twiki.cern.ch/twiki/bin/viewauth/CMS/STARlightINFO
