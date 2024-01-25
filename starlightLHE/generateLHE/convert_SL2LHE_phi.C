@@ -31,7 +31,7 @@ http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/UserCode/kumarv/Input/StarToHepmc.C?v
 
 using namespace std;
 
-void convert_SL2LHE_phi(string infilename = "output_all/slight_CohPsi2S_4Feeddown_0001.tx", string outfilename = "starlight_LHEtest", double beamE1 = 2510, double beamE2 = 2510) //makeEventsFile
+void convert_SL2LHE_phi(string infilename = "output_all/slight_CohPsi2S_4Feeddown_0001.tx", string outfilename = "starlight_LHEtest", double beamE1 = 2680.0, double beamE2 = 2680.0) //makeEventsFile
 {
     char ofName[100];
     sprintf(ofName,"%s.lhe", outfilename.c_str());

@@ -2,16 +2,11 @@
 #date
 
 if [ $# != 1 ]; then
-    echo "Please provide particle species name: \"LowMassGammaGamma\" OR \"CohJpsi\" OR \"CohJpsi_0n0n\" OR \"CohJpsi_0nXn\" OR \"CohJpsi_XnXn\" OR \"InCohJpsi\" OR \"CohPsi2S\" OR \"InCohPsi2S\" !!!"
+    echo "Please provide particle species name: \"LowMassGammaGamma\" OR \"CohPhi\" OR \"CohPhi_0n0n\" OR \"CohPhi_0nXn\" OR \"CohPhi_XnXn\" OR \"InCohPhi\"!!!"
     exit
 fi
 
-# if [ $1 != "LowMassGammaGamma" -a $1 != "CohJpsi" -a $1 != "CohJpsi_0n0n" -a $1 != "CohJpsi_0nXn" -a $1 != "CohJpsi_XnXn" -a $1 != "InCohJpsi" -a $1 != "CohPsi2S" -a $1 != "InCohPsi2S" ]; then
-#     echo "The particle species name should be: \"LowMassGammaGamma\" OR \"CohJpsi\" OR \"CohJpsi_0n0n\" OR \"CohJpsi_0nXn\" OR \"InCohJpsi\" OR \"CohPsi2S\" OR \"InCohPsi2S\" !!!"
-#     exit
-# fi
-
-dir=$1s
+dir=$1
 
 lheFileDir="lheFiles"
 
@@ -23,7 +18,7 @@ if [ "`ls -A $dir/$lheFileDir`" != "" ]; then
     rm -rf $dir/$lheFileDir/*
 fi
 
-cmsEnergyDiv2=2510
+cmsEnergyDiv2=2680.0
 
 for inputFile in `ls $dir/splitFiles/slight*`
 do

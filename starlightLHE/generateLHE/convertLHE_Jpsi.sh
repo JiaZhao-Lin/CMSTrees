@@ -11,7 +11,7 @@ if [ $1 != "LowMassGammaGamma" -a $1 != "CohJpsi" -a $1 != "CohJpsi_0n0n" -a $1 
     exit
 fi
 
-dir=$1s
+dir=$1
 
 lheFileDir="lheFiles"
 

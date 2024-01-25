@@ -25,6 +25,8 @@ specName=$2
 
 mkdir -p $dir/splitFiles
 
-split -l ${totalLines} ${dir}/slight.${specName}.out  --numeric-suffixes=1  -a 4   ${dir}/splitFiles/slight_${specName}_  --additional-suffix=.out
+# split -l ${totalLines} ${dir}/slight.${specName}.out  --numeric-suffixes=1  -a 4   ${dir}/splitFiles/slight_${specName}_  --additional-suffix=.out
+tail -n +4 ${dir}/slight.${specName}.out | split -l ${totalLines} --numeric-suffixes=1 -a 4 - ${dir}/splitFiles/slight_${specName}_ --additional-suffix=.out
+
 #gsplit -l ${totalLines} ${dir}/slight.${specName}.out  --numeric-suffixes=1  -a 4   ${dir}/splitFiles/slight_${specName}_  --additional-suffix=.out
 #gsplit -l 100000 slight.CohJpsi.out  --numeric-suffixes=1  -a 4   splitFiles/slight_CohJpsi_  --additional-suffix=.out
