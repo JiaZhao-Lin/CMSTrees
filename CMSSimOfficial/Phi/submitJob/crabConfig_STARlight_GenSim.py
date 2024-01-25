@@ -11,7 +11,7 @@ channel         = 'CohPhiToKK'
 request_name    += '_%s' % datetime.now().strftime('%y%m%d_%H%M%S')
 
 # input_filelist	= './fileList/t0streamer_PhysicsHIForward0_374778.txt'
-input_file      = 'starlight_slight_CohPhiToKK_Run3_el8_amd64_gcc11_CMSSW_13_2_6_patch2_tarball.tgz'
+input_file      = 'starlight_slight_CohPhiToKK_Run3_el8_amd64_gcc11_CMSSW_13_2_10_tarball.tgz'
 # input_dataset = ''
 
 output_pd       = 'STARlight'

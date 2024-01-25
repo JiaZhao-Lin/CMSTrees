@@ -98,25 +98,25 @@ process.GlobalTag.toGet.extend([cms.PSet(record = cms.string('L1TUtmTriggerMenuR
 1. `crab submit crabConfig_STARlight_Reco.py`
 1. `./getFileList.sh OutputDirectory fileList/CohJpsi_100k_Reco.txt`
 
-# Official $J/\psi$ CMS Simulation
+# Official $phi$ CMS Simulation
 For Run3, STARlight Production should be submitted using official CMS production instructions.
 See the Twiki page for the latest information:
 https://twiki.cern.ch/twiki/bin/viewauth/CMS/STARlightINFO
 
 ## 1. Getting The STARlight Samples Tarball 
-The Current STARlight version: v3.17
+The Current STARlight version: v3.26
 
 1. First log into a SL8 lxplus machine: `ssh USERNAME@lxplus8.cern.ch`
 1. Then clone the git repository: `git clone https://github.com/cms-sw/genproductions.git && cd genproductions/bin/Starlight`
 1. Copy the slight.in file to the directory: production/PbPb_5p36TeV/slight_CohJpsiToMuMu_Run3.in (**NOTE: Make sure that there are NO ">" or "<" or "-->" characters in the input file (even under a comment line), since that will cause the LHE file to be invalid**)
-1. 2023 MC production (el8_amd64_gcc11 , CMSSW_13_0_X) NEEDS TO BE UPDATED `./gridpack_generation.sh production/PbPb_5p36TeV/slight_CohJpsiToMuMu_Run3.in el8_amd64_gcc11 CMSSW_13_0_12`
+1. 2023 MC production (el8_amd64_gcc11 , CMSSW_13_2_X) NEEDS TO BE UPDATED `./gridpack_generation.sh production/PbPb_5p36TeV/slight_CohPhiToKK_Run3.in el8_amd64_gcc11 CMSSW_13_2_10`
 1. If needed, you can test the tarball by running: `./run_generic_tarball_cvmfs.sh ${PWD}/{TARBALL NAME}.tgz 10 1234`
 
 ## 2. Set up the CMS environment
 
-1. `cmsrel CMSSW_13_0_12`
-1. `cd CMSSW_13_0_12/src && cmsenv`
-1. move the "Configuration" and "genPythonCfg_cmsDriver.sh" to CMSSW_13_0_12/src
+1. `cmsrel CMSSW_13_2_10`
+1. `cd CMSSW_13_2_10/src && cmsenv`
+1. move the "Configuration" and "genPythonCfg_cmsDriver.sh" to CMSSW_13_2_10/src
 1. `scram b -j 8`
 
 ## 3. Run the CMS Simulation
