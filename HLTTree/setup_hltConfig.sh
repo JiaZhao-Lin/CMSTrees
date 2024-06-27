@@ -17,7 +17,7 @@ sed -i "/add\ specific/,+16d" $HLTCONFIGFILE
 echo '
 # Define the output
 process.output = cms.OutputModule("PoolOutputModule",
-    outputCommands = cms.untracked.vstring("drop *", "keep *_TriggerResults_*_*", "keep *_hltPixelTracksPPOnAA_*_*", "keep *_hltPixelTracksLowPtForUPCPPOnAA_*_*", "keep *_hltPixelTracksForUPCPPOnAA_*_*", "*_hltSiPixelClustersPPOnAA_*_*"),
+    outputCommands = cms.untracked.vstring("drop *", "keep *_TriggerResults_*_*", "keep *_hltPixelTracksPPOnAA_*_*", "keep *_hltPixelTracksLowPtForUPCPPOnAA_*_*", "keep *_hltPixelTracksForUPCPPOnAA_*_*", "keep *_hltSiPixelClustersPPOnAA_*_*"),
     fileName = cms.untracked.string("output_130.root"),
 )
 process.output_path = cms.EndPath(process.output)
