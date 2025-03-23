@@ -6,8 +6,8 @@ config = config()
 ## User Input ##############################################################################
 pset_name       = 'step1_STARlight_LHE_GenSim_cfg.py'
 
-request_name    = 'STARlight_CohPhiToKK_KK_GenSim_132X'
-channel         = 'CohPhiToKK_KK'
+request_name    = 'STARlight_CohPhiToKK_GenSim'
+channel         = 'CohPhiToKK'
 request_name    += '_%s' % datetime.now().strftime('%y%m%d_%H%M%S')
 
 input_filelist	= '/afs/cern.ch/user/j/jiazhao/fileList/STARlight/CohPhiToKK_KK_132X_LHE.txt'

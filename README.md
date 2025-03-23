@@ -132,7 +132,7 @@ The Current STARlight version: v3.26
 1. First log into a SL8 lxplus machine: `ssh USERNAME@lxplus8.cern.ch`
 1. Then clone the git repository: `git clone https://github.com/cms-sw/genproductions.git && cd genproductions/bin/Starlight`
 1. Copy the slight.in file to the directory: production/PbPb_5p36TeV/slight_CohJpsiToMuMu_Run3.in (**NOTE: Make sure that there are NO ">" or "<" or "-->" characters in the input file (even under a comment line), since that will cause the LHE file to be invalid**)
-1. 2023 MC production (el8_amd64_gcc11 , CMSSW_13_2_X) NEEDS TO BE UPDATED `./gridpack_generation.sh production/PbPb_5p36TeV/slight_CohPhiToKK_Run3.in el8_amd64_gcc11 CMSSW_13_2_10`
+1. 2023 MC production (el8_amd64_gcc11 , CMSSW_13_2_X) NEEDS TO BE UPDATED `./gridpack_generation.sh production/PbPb_5p36TeV/slight_CohPhiToKK_Run3.in el8_amd64_gcc11 CMSSW_13_0_18_HeavyIon`
 1. If needed, you can test the tarball by running: `./run_generic_tarball_cvmfs.sh ${PWD}/{TARBALL NAME}.tgz 10 1234`
 
 ## 2. Set up the CMS environment

@@ -1,0 +1,5 @@
+cmsDriver.py Configuration/GenProduction/python/HINPbPb_Run3_STARlight_fragment_official.py --mc --eventcontent RAWSIM --datatier GEN-SIM --conditions 130X_mcRun3_2023_realistic_HI_v18 --beamspot Realistic2023PbPbCollision --step LHE,GEN,SIM --scenario HeavyIons --geometry DB:Extended --era Run3_pp_on_PbPb --fileout file:step1_STARlight_LHE_GenSim.root --python_filename step1_STARlight_LHE_GenSim_cfg.py
+
+cmsDriver.py step1 --mc --eventcontent RAWSIM --pileup HiMixNoPU --datatier GEN-SIM-DIGI-RAW --conditions 132X_mcRun3_2023_realistic_HI_v9 --step DIGI:pdigi_hi_nogen,L1,DIGI2RAW,HLT:HIon --geometry DB:Extended --era Run3_pp_on_PbPb_2023 --filein file:step1_STARlight_LHE_GenSim.root --fileout file:step2_STARlight_Digi.root --python_filename step2_STARlight_Digi_cfg.py
+
+cmsDriver.py --mc --eventcontent AODSIM --datatier AODSIM --conditions 132X_mcRun3_2023_realistic_HI_v9 --step RAW2DIGI,L1Reco,RECO --era Run3_2023_UPC --filein file:step2_STARlight_Digi.root --fileout file:step3_STARlight_Reco.root --python_filename step3_STARlight_Reco_cfg.py

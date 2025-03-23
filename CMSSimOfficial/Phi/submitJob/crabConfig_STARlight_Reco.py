@@ -28,9 +28,8 @@ config.section_('JobType')
 config.JobType.pluginName = 'Analysis'
 config.JobType.psetName = pset_name
 config.JobType.numCores = 1
-config.JobType.maxMemoryMB = 4000
+config.JobType.maxMemoryMB = 3000
 # config.JobType.maxJobRuntimeMin = 1000
-config.JobType.allowUndistributedCMSSW = True
 
 ## Data #####################################################################################
 config.section_('Data')
@@ -49,7 +48,6 @@ config.Data.publication = False
 config.Data.outputPrimaryDataset = output_pd
 config.Data.outputDatasetTag = channel
 config.Data.outLFNDirBase = output_dir
-config.Data.ignoreLocality = True
 
 ## Site #####################################################################################
 config.section_('Site')

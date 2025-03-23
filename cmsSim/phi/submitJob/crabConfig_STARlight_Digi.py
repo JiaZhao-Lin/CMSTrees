@@ -6,8 +6,8 @@ config = config()
 ## User Input ##############################################################################
 pset_name       = 'step2_STARlight_Digi_cfg.py'
 
-request_name    = 'STARlight_CohPhiToKK_KK_Digi_132X'
-channel         = 'CohPhiToKK_KK'
+request_name    = 'STARlight_CohPhiToKK_Digi'
+channel         = 'CohPhiToKK'
 request_name    += '_%s' % datetime.now().strftime('%y%m%d_%H%M%S')
 
 input_filelist  = '/afs/cern.ch/user/j/jiazhao/fileList/STARlight/CohPhiToKK_KK_132X_GenSim.txt'
@@ -30,7 +30,6 @@ config.JobType.psetName = pset_name
 config.JobType.numCores = 1
 config.JobType.maxMemoryMB = 4000
 # config.JobType.maxJobRuntimeMin = 1000
-config.JobType.allowUndistributedCMSSW = True
 
 ## Data #####################################################################################
 config.section_('Data')

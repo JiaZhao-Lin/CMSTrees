@@ -6,11 +6,11 @@ config = config()
 ## User Input ##############################################################################
 pset_name       = 'step2_STARlight_Digi_cfg.py'
 
-request_name    = 'STARlight_CohPhiToKK_Digi_132X'
+request_name    = 'STARlight_CohPhiToKK_Digi_nuclearParR7p67'
 channel         = 'CohPhiToKK'
 request_name    += '_%s' % datetime.now().strftime('%y%m%d_%H%M%S')
 
-input_filelist  = '/afs/cern.ch/user/j/jiazhao/fileList/STARlight/CohPhiToKK_132X_GenSim.txt'
+input_filelist  = '/afs/cern.ch/user/j/jiazhao/fileList/STARlight/CohPhiToKK_GenSim_nuclearParR7p67.txt'
 # input_dataset = ''
 
 output_pd       = 'STARlight'
@@ -28,9 +28,8 @@ config.section_('JobType')
 config.JobType.pluginName = 'Analysis'
 config.JobType.psetName = pset_name
 config.JobType.numCores = 1
-config.JobType.maxMemoryMB = 4000
+config.JobType.maxMemoryMB = 3000
 # config.JobType.maxJobRuntimeMin = 1000
-config.JobType.allowUndistributedCMSSW = True
 
 ## Data #####################################################################################
 config.section_('Data')
@@ -49,7 +48,6 @@ config.Data.publication = False
 config.Data.outputPrimaryDataset = output_pd
 config.Data.outputDatasetTag = channel
 config.Data.outLFNDirBase = output_dir
-config.Data.ignoreLocality = True
 
 ## Site #####################################################################################
 config.section_('Site')

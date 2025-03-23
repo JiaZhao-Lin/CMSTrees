@@ -6,7 +6,7 @@ config = config()
 ## User Input ##############################################################################
 pset_name       = 'step1_STARlight_LHE_GenSim_cfg.py'
 
-request_name    = 'STARlight_CohPhiToKK_GenSim_132X'
+request_name    = 'STARlight_CohPhiToKK_GenSim'
 channel         = 'CohPhiToKK'
 request_name    += '_%s' % datetime.now().strftime('%y%m%d_%H%M%S')
 
@@ -32,7 +32,6 @@ config.JobType.psetName = pset_name
 config.JobType.numCores = 1
 # config.JobType.maxMemoryMB = 4000
 # config.JobType.maxJobRuntimeMin = 1000
-config.JobType.allowUndistributedCMSSW = True
 
 ## Data #####################################################################################
 config.section_('Data')
@@ -58,7 +57,6 @@ config.Data.outputPrimaryDataset = output_pd
 # config.Data.outputDatasetTag = config.General.requestName
 config.Data.outputDatasetTag = channel
 config.Data.outLFNDirBase = output_dir
-config.Data.ignoreLocality = True
 
 ## Site #####################################################################################
 config.section_('Site')

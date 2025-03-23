@@ -6,11 +6,11 @@ config = config()
 ## User Input ##############################################################################
 pset_name       = 'step3_STARlight_Reco_cfg.py'
 
-request_name    = 'STARlight_CohPhiToKK_KK_Reco_132X'
-channel         = 'CohPhiToKK_KK'
+request_name    = 'STARlight_CohPhiToKK_Reco_132X'
+channel         = 'CohPhiToKK'
 request_name    += '_%s' % datetime.now().strftime('%y%m%d_%H%M%S')
 
-input_filelist  = '/afs/cern.ch/user/j/jiazhao/fileList/STARlight/CohPhiToKK_KK_132X_Digi.txt'
+input_filelist  = '/afs/cern.ch/user/j/jiazhao/fileList/STARlight/CohPhiToKK_132X_Digi.txt'
 # input_dataset = ''
 
 output_pd       = 'STARlight'
