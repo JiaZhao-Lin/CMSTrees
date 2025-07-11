@@ -8,18 +8,18 @@ __pycache__
 .ipynb_checkpoints
 
 *.root
-*.txt
-*.dat
-*.pdf
-*.png
-*.jpg
-*.gif
-*.log
-*.yaml
-*.tar
-*.gz
-Test.*
-test.*
+# *.txt
+# *.dat
+# *.pdf
+# *.png
+# *.jpg
+# *.gif
+# *.log
+# *.yaml
+# *.tar
+# *.gz
+# Test.*
+# test.*
 
 ##############################################
 ## ROOT Compiled files
